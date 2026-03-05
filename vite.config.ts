@@ -9,5 +9,5 @@ react(),
 tailwindcss(),
 visualizer({ filename: 'stats.html' })
 ],
-base: '/react-starter-template/',
+base: '/competency-radar/',
 })
