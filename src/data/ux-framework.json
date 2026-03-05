@@ -1,0 +1,94 @@
+{
+    "frameworkId": "david-travis-ux-v1",
+    "name": "UX Competency Framework",
+    "author": "David Travis",
+    "scale": {
+      "1": "Novice",
+      "2": "Advanced Beginner",
+      "3": "Competent",
+      "4": "Proficient",
+      "5": "Expert"
+    },
+    "categories": [
+      {
+        "id": "user-research",
+        "label": "User Research",
+        "behaviours": [
+          "Plan and conduct user interviews",
+          "Create personas based on empirical data",
+          "Run ethnographic field studies",
+          "Analyse qualitative data for themes"
+        ]
+      },
+      {
+        "id": "usability-eval",
+        "label": "Usability Evaluation",
+        "behaviours": [
+          "Plan and moderate usability tests",
+          "Conduct expert/heuristic reviews",
+          "Analyse and report usability findings",
+          "Measure task success and time-on-task"
+        ]
+      },
+      {
+        "id": "info-arch",
+        "label": "Information Architecture",
+        "behaviours": [
+          "Create sitemaps and navigation flows",
+          "Conduct card sorting exercises",
+          "Design taxonomy and labelling systems",
+          "Organise complex content structures"
+        ]
+      },
+      {
+        "id": "int-design",
+        "label": "Interaction Design",
+        "behaviours": [
+          "Create wireframes and interactive prototypes",
+          "Design for accessibility and inclusivity",
+          "Define UI patterns and design systems",
+          "Specify micro-interactions and transitions"
+        ]
+      },
+      {
+        "id": "visual-design",
+        "label": "Visual Design",
+        "behaviours": [
+          "Apply colour theory and typography",
+          "Create high-fidelity UI mockups",
+          "Ensure brand consistency across touchpoints",
+          "Design for different screen densities (Retina/OLED)"
+        ]
+      },
+      {
+        "id": "writing",
+        "label": "Technical Writing",
+        "behaviours": [
+          "Write clear microcopy and UI labels",
+          "Document user requirements and specs",
+          "Create help documentation and guides",
+          "Maintain a consistent tone of voice"
+        ]
+      },
+      {
+        "id": "strategy",
+        "label": "User Strategy",
+        "behaviours": [
+          "Align UX goals with business objectives",
+          "Create customer journey maps",
+          "Define value propositions",
+          "Facilitate stakeholder workshops"
+        ]
+      },
+      {
+        "id": "professional",
+        "label": "Professional Development",
+        "behaviours": [
+          "Mentor junior designers",
+          "Stay updated on industry trends",
+          "Contribute to the design community",
+          "Manage project timelines and budgets"
+        ]
+      }
+    ]
+  }

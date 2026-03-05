@@ -1,0 +1,16 @@
+{
+    "userId": "rhys-001",
+    "lastUpdated": "2026-03-05",
+    "frameworkId": "david-travis-ux-v1",
+    "scores": {
+      "user-research": 4,
+      "usability-eval": 2,
+      "info-arch": 3,
+      "int-design": 5,
+      "visual-design": 3,
+      "writing": 2,
+      "strategy": 4,
+      "professional": 3
+    },
+    "targets": ["usability-eval", "writing"]
+  }
