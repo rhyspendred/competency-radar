@@ -38,6 +38,7 @@ export default function CompetencyRadar({
     segIndex: number;
     startDist: number;
     dragging: boolean;
+    lastLevel: number;
   } | null>(null);
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export default function CompetencyRadar({
       segIndex: hit.segIndex,
       startDist: hit.dist,
       dragging: false,
+      lastLevel: hit.level,
     };
     containerRef.current?.setPointerCapture(e.pointerId);
   };
@@ -89,6 +91,10 @@ export default function CompetencyRadar({
     if (drag.dragging) {
       onSelect(data[drag.segIndex].id);
       onScoreChange(data[drag.segIndex].id, hit.level);
+      if (hit.level !== drag.lastLevel) {
+        drag.lastLevel = hit.level;
+        navigator.vibrate?.(6);
+      }
     }
   };
 
@@ -101,6 +107,7 @@ export default function CompetencyRadar({
         const zone = (OUTER - INNER) / LEVELS;
         const level = Math.max(0, Math.min(LEVELS, Math.round((drag.startDist - INNER) / zone)));
         onScoreChange(id, level);
+        navigator.vibrate?.(6);
       }
     }
     dragRef.current = null;
@@ -111,7 +118,7 @@ export default function CompetencyRadar({
   return (
     <div
       ref={containerRef}
-      className="mx-auto touch-none"
+      className="mx-auto touch-none outline-none select-none [-webkit-tap-highlight-color:transparent]"
       style={{ width: CHART, height: CHART }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
