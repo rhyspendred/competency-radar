@@ -59,7 +59,7 @@ export default function CompetencyRadar({
 
   const pulsePress = () => {
     if (!chartRef.current) return;
-    fmAnimate(chartRef.current, { scale: 0.95, opacity: 0.85 }, SPRING);
+    fmAnimate(chartRef.current, { scale: 0.99, opacity: 0.95 }, SPRING);
   };
 
   const pulseRelease = () => {
@@ -69,7 +69,7 @@ export default function CompetencyRadar({
 
   const pulseTick = () => {
     if (!chartRef.current) return;
-    fmAnimate(chartRef.current, { scale: [0.97, 1] }, SPRING);
+    fmAnimate(chartRef.current, { scale: [0.99, 1] }, SPRING);
   };
 
   const hitTest = (clientX: number, clientY: number) => {
