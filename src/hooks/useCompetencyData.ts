@@ -46,5 +46,5 @@ export function useCompetencyData() {
     }));
   };
 
-  return { data, setScore };
+  return { frameworkName: framework.name, data, setScore };
 }

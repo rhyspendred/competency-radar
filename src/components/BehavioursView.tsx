@@ -2,35 +2,27 @@ import type { CompetencyItem } from "../hooks/useCompetencyData";
 
 interface Props {
   item: CompetencyItem;
-  onBack: () => void;
 }
 
-export default function BehavioursView({ item, onBack }: Props) {
+export default function BehavioursView({ item }: Props) {
   return (
-    <div className="h-full bg-black text-white flex flex-col">
-      {/* Header */}
-      <div className="shrink-0 px-5 pt-6 pb-4 border-b border-[#222]">
-        <button
-          onClick={onBack}
-          className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer mb-3"
-        >
-          &larr; Back to chart
-        </button>
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold">{item.label}</h1>
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* Level summary */}
+      <div className="shrink-0 px-5 pt-3 pb-3 border-b border-[#222]">
+        <div className="flex items-center gap-2">
           {item.isTarget && (
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/25 shrink-0">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/25">
               Target
             </span>
           )}
+          <p className="text-sm text-gray-500">
+            Level {item.score}/{item.maxScore} &middot; {item.scaleName}
+          </p>
         </div>
-        <p className="text-sm text-gray-500 mt-1">
-          Level {item.score}/{item.maxScore} &middot; {item.scaleName}
-        </p>
       </div>
 
       {/* Scrollable behaviours list */}
-      <ul className="flex-1 overflow-y-auto overscroll-contain px-5 py-5 space-y-4">
+      <ul className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-3">
         {item.behaviours.map((b, i) => (
           <li
             key={b}
