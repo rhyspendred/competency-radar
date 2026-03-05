@@ -3,13 +3,13 @@ import { PieChart, Pie, Cell } from "recharts";
 import { animate as fmAnimate } from "framer-motion";
 import type { CompetencyItem } from "../hooks/useCompetencyData";
 
-const CHART = 340;
-const CX = CHART / 2;
-const CY = CHART / 2;
-const INNER = 24;
-const OUTER = 160;
+const MARGIN = 16;
+const MAX_CHART = 500;
+
+const BASE = 340;
+const INNER_R = 24 / BASE;
+const OUTER_R = 160 / BASE;
 const LEVELS = 5;
-const BAND = (OUTER - INNER) / LEVELS;
 
 const SPRING = { type: "spring" as const, stiffness: 400, damping: 25 };
 
@@ -34,6 +34,8 @@ export default function CompetencyRadar({
   onScoreChange,
 }: Props) {
   const [anim, setAnim] = useState(0);
+  const [size, setSize] = useState(0);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -42,6 +44,17 @@ export default function CompetencyRadar({
     dragging: boolean;
     lastLevel: number;
   } | null>(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setSize(Math.min(width - MARGIN * 2, height - MARGIN * 2, MAX_CHART));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const t0 = performance.now();
@@ -54,6 +67,12 @@ export default function CompetencyRadar({
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
+
+  const inner = size * INNER_R;
+  const outer = size * OUTER_R;
+  const band = (outer - inner) / LEVELS;
+  const cx = size / 2;
+  const cy = size / 2;
 
   const pulsePress = () => {
     if (!chartRef.current) return;
@@ -74,20 +93,20 @@ export default function CompetencyRadar({
     const el = containerRef.current;
     if (!el) return null;
     const rect = el.getBoundingClientRect();
-    const x = clientX - rect.left - CX;
-    const y = clientY - rect.top - CY;
+    const x = clientX - rect.left - cx;
+    const y = clientY - rect.top - cy;
     const dist = Math.sqrt(x * x + y * y);
     const angleDeg = Math.atan2(-y, x) * (180 / Math.PI);
     const cw = ((90 - angleDeg) % 360 + 360) % 360;
     const segIndex = Math.floor(cw / (360 / data.length)) % data.length;
-    const zone = (OUTER - INNER) / LEVELS;
-    const level = Math.max(0, Math.min(LEVELS, Math.round((dist - INNER) / zone)));
+    const zone = (outer - inner) / LEVELS;
+    const level = Math.max(0, Math.min(LEVELS, Math.round((dist - inner) / zone)));
     return { segIndex, level, dist };
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const hit = hitTest(e.clientX, e.clientY);
-    if (!hit || hit.dist > OUTER + 20) return;
+    if (!hit || hit.dist > outer + 20) return;
     dragRef.current = {
       segIndex: hit.segIndex,
       startDist: hit.dist,
@@ -122,9 +141,9 @@ export default function CompetencyRadar({
     if (drag && !drag.dragging) {
       const id = data[drag.segIndex].id;
       onSelect(id);
-      if (drag.startDist >= INNER * 0.5) {
-        const zone = (OUTER - INNER) / LEVELS;
-        const level = Math.max(0, Math.min(LEVELS, Math.round((drag.startDist - INNER) / zone)));
+      if (drag.startDist >= inner * 0.5) {
+        const zone = (outer - inner) / LEVELS;
+        const level = Math.max(0, Math.min(LEVELS, Math.round((drag.startDist - inner) / zone)));
         onScoreChange(id, level);
       }
     }
@@ -134,86 +153,90 @@ export default function CompetencyRadar({
 
   const pieData = data.map(() => ({ v: 1 }));
 
-  const guideRadii = [1, 2, 3, 4].map((l) => (INNER + l * BAND) * anim);
+  const guideRadii = [1, 2, 3, 4].map((l) => (inner + l * band) * anim);
 
   return (
-    <div
-      ref={containerRef}
-      className="mx-auto touch-none outline-none select-none [-webkit-tap-highlight-color:transparent]"
-      style={{ width: CHART, height: CHART }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-    >
-      <div ref={chartRef} className="relative" style={{ width: CHART, height: CHART }}>
-        {/* Background scale circles */}
-        <svg
-          width={CHART}
-          height={CHART}
-          className="absolute inset-0 pointer-events-none"
+    <div ref={wrapperRef} className="w-full h-full flex items-center justify-center">
+      {size > 0 && (
+        <div
+          ref={containerRef}
+          className="touch-none outline-none select-none [-webkit-tap-highlight-color:transparent]"
+          style={{ width: size, height: size }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
-          {guideRadii.map((r, i) => (
-            <circle
-              key={i}
-              cx={CX}
-              cy={CY}
-              r={r}
-              fill="none"
-              stroke="rgba(255,255,255,0.08)"
-              strokeWidth={0.5}
-            />
-          ))}
-        </svg>
+          <div ref={chartRef} className="relative" style={{ width: size, height: size }}>
+            {/* Background scale circles */}
+            <svg
+              width={size}
+              height={size}
+              className="absolute inset-0 pointer-events-none"
+            >
+              {guideRadii.map((r, i) => (
+                <circle
+                  key={i}
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeWidth={0.5}
+                />
+              ))}
+            </svg>
 
-        {/* Data rings */}
-        <div className="absolute inset-0">
-          <PieChart width={CHART} height={CHART}>
-            {Array.from({ length: LEVELS }, (_, li) => {
-              const level = li + 1;
-              const ir = (INNER + li * BAND) * anim;
-              const or = (INNER + level * BAND) * anim;
+            {/* Data rings */}
+            <div className="absolute inset-0">
+              <PieChart width={size} height={size}>
+                {Array.from({ length: LEVELS }, (_, li) => {
+                  const level = li + 1;
+                  const ir = (inner + li * band) * anim;
+                  const or_ = (inner + level * band) * anim;
 
-              return (
-                <Pie
-                  key={level}
-                  data={pieData}
-                  cx={CX}
-                  cy={CY}
-                  innerRadius={ir}
-                  outerRadius={or}
-                  startAngle={90}
-                  endAngle={-270}
-                  dataKey="v"
-                  paddingAngle={0}
-                  isAnimationActive={false}
-                >
-                  {data.map((item) => {
-                    const filled = item.score >= level;
-                    const sel = item.id === selectedId;
-                    return (
-                      <Cell
-                        key={item.id}
-                        fill={
-                          filled
-                            ? item.isTarget
-                              ? ORANGE_SHADES[li]
-                              : BLUE_SHADES[li]
-                            : "rgba(255,255,255,0.03)"
-                        }
-                        fillOpacity={filled ? (sel ? 1 : 0.75) : 1}
-                        stroke="#000"
-                        strokeWidth={2}
-                        strokeLinejoin="round"
-                      />
-                    );
-                  })}
-                </Pie>
-              );
-            })}
-          </PieChart>
+                  return (
+                    <Pie
+                      key={level}
+                      data={pieData}
+                      cx={cx}
+                      cy={cy}
+                      innerRadius={ir}
+                      outerRadius={or_}
+                      startAngle={90}
+                      endAngle={-270}
+                      dataKey="v"
+                      paddingAngle={0}
+                      isAnimationActive={false}
+                    >
+                      {data.map((item) => {
+                        const filled = item.score >= level;
+                        const sel = item.id === selectedId;
+                        return (
+                          <Cell
+                            key={item.id}
+                            fill={
+                              filled
+                                ? item.isTarget
+                                  ? ORANGE_SHADES[li]
+                                  : BLUE_SHADES[li]
+                                : "rgba(255,255,255,0.03)"
+                            }
+                            fillOpacity={filled ? (sel ? 1 : 0.75) : 1}
+                            stroke="#000"
+                            strokeWidth={2}
+                            strokeLinejoin="round"
+                          />
+                        );
+                      })}
+                    </Pie>
+                  );
+                })}
+              </PieChart>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

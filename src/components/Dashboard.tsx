@@ -199,8 +199,8 @@ export default function Dashboard() {
             })}
           </div>
 
-          {/* Chart */}
-          <div className="flex-1 flex items-start justify-center min-h-0">
+          {/* Chart — fills remaining vertical space */}
+          <div className="flex-1 min-h-0">
             <CompetencyRadar
               data={data}
               selectedId={selectedId}
