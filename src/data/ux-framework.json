@@ -14,10 +14,15 @@
         "id": "user-research",
         "label": "User Research",
         "behaviours": [
-          "Plan and conduct user interviews",
-          "Create personas based on empirical data",
-          "Run ethnographic field studies",
-          "Analyse qualitative data for themes"
+          "Articulate the importance of user research, not just before the system is designed but also during design and after deployment.",
+          "Identify the potential users of the system.",
+          "Plan site visits to end users, including deciding who to sample.",
+          "Structure an effective interview that gets beyond the surface opinions (what users say) to reveal user goals (what users want).",
+          "Keep appropriate records of each observation.",
+          "Analyse qualitative data from a site visit.",
+          "Present the data from a site visit in ways that can be used to drive design: for example, personas, user stories, user journey maps.",
+          "Analyse and interpret existing data (for example web analytics, user surveys, customer support calls).",
+          "Critically evaluate previous user research."
         ]
       },
       {
@@ -81,8 +86,8 @@
         ]
       },
       {
-        "id": "professional",
-        "label": "Professional Development",
+        "id": "management",
+        "label": "UX Management",
         "behaviours": [
           "Mentor junior designers",
           "Stay updated on industry trends",
