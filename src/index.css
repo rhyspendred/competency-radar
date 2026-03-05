@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+.recharts-sector {
+  cursor: pointer;
+  outline: none;
+}
