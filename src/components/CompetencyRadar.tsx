@@ -9,9 +9,7 @@ const CY = CHART / 2;
 const INNER = 24;
 const OUTER = 160;
 const LEVELS = 5;
-const RING_GAP = 1.5;
-const BAND = (OUTER - INNER - (LEVELS - 1) * RING_GAP) / LEVELS;
-const PAD_ANGLE = 2;
+const BAND = (OUTER - INNER) / LEVELS;
 
 const SPRING = { type: "spring" as const, stiffness: 400, damping: 25 };
 
@@ -136,6 +134,8 @@ export default function CompetencyRadar({
 
   const pieData = data.map(() => ({ v: 1 }));
 
+  const guideRadii = [1, 2, 3, 4].map((l) => (INNER + l * BAND) * anim);
+
   return (
     <div
       ref={containerRef}
@@ -146,49 +146,73 @@ export default function CompetencyRadar({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
     >
-      <div ref={chartRef} style={{ width: CHART, height: CHART }}>
-        <PieChart width={CHART} height={CHART}>
-          {Array.from({ length: LEVELS }, (_, li) => {
-            const level = li + 1;
-            const ir = (INNER + li * (BAND + RING_GAP)) * anim;
-            const or = (INNER + li * (BAND + RING_GAP) + BAND) * anim;
+      <div ref={chartRef} className="relative" style={{ width: CHART, height: CHART }}>
+        {/* Background scale circles */}
+        <svg
+          width={CHART}
+          height={CHART}
+          className="absolute inset-0 pointer-events-none"
+        >
+          {guideRadii.map((r, i) => (
+            <circle
+              key={i}
+              cx={CX}
+              cy={CY}
+              r={r}
+              fill="none"
+              stroke="rgba(255,255,255,0.08)"
+              strokeWidth={0.5}
+            />
+          ))}
+        </svg>
 
-            return (
-              <Pie
-                key={level}
-                data={pieData}
-                cx={CX}
-                cy={CY}
-                innerRadius={ir}
-                outerRadius={or}
-                startAngle={90}
-                endAngle={-270}
-                dataKey="v"
-                paddingAngle={PAD_ANGLE}
-                isAnimationActive={false}
-              >
-                {data.map((item) => {
-                  const filled = item.score >= level;
-                  const sel = item.id === selectedId;
-                  return (
-                    <Cell
-                      key={item.id}
-                      fill={
-                        filled
-                          ? item.isTarget
-                            ? ORANGE_SHADES[li]
-                            : BLUE_SHADES[li]
-                          : "rgba(255,255,255,0.04)"
-                      }
-                      stroke={sel ? "#fff" : "none"}
-                      strokeWidth={sel ? 1.5 : 0}
-                    />
-                  );
-                })}
-              </Pie>
-            );
-          })}
-        </PieChart>
+        {/* Data rings */}
+        <div className="absolute inset-0">
+          <PieChart width={CHART} height={CHART}>
+            {Array.from({ length: LEVELS }, (_, li) => {
+              const level = li + 1;
+              const ir = (INNER + li * BAND) * anim;
+              const or = (INNER + level * BAND) * anim;
+
+              return (
+                <Pie
+                  key={level}
+                  data={pieData}
+                  cx={CX}
+                  cy={CY}
+                  innerRadius={ir}
+                  outerRadius={or}
+                  startAngle={90}
+                  endAngle={-270}
+                  dataKey="v"
+                  paddingAngle={0}
+                  isAnimationActive={false}
+                >
+                  {data.map((item) => {
+                    const filled = item.score >= level;
+                    const sel = item.id === selectedId;
+                    return (
+                      <Cell
+                        key={item.id}
+                        fill={
+                          filled
+                            ? item.isTarget
+                              ? ORANGE_SHADES[li]
+                              : BLUE_SHADES[li]
+                            : "rgba(255,255,255,0.03)"
+                        }
+                        fillOpacity={filled ? (sel ? 1 : 0.75) : 1}
+                        stroke="#000"
+                        strokeWidth={2}
+                        strokeLinejoin="round"
+                      />
+                    );
+                  })}
+                </Pie>
+              );
+            })}
+          </PieChart>
+        </div>
       </div>
     </div>
   );
