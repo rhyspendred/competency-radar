@@ -1,29 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import type { CompetencyItem } from "../hooks/useCompetencyData";
 
-const BLUE = "#3b82f6";
-const ORANGE = "#f97316";
-const CHART = 280;
+const CHART = 340;
 const CX = CHART / 2;
 const CY = CHART / 2;
-const MAX_R = 95;
-const MIN_R = 15;
-const LABEL_R = 118;
-const GAP = 1.5;
+const INNER = 24;
+const OUTER = 160;
+const LEVELS = 5;
+const RING_GAP = 1.5;
+const BAND = (OUTER - INNER - (LEVELS - 1) * RING_GAP) / LEVELS;
+const PAD_ANGLE = 2;
+
+const BLUE_SHADES = ["#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1"];
+const ORANGE_SHADES = ["#fdba74", "#fb923c", "#f97316", "#ea580c", "#c2410c"];
 
 interface Props {
   data: CompetencyItem[];
   selectedId: string;
   onSelect: (id: string) => void;
+  onScoreChange: (id: string, score: number) => void;
 }
 
 function easeOut(t: number) {
   return 1 - (1 - t) ** 3;
 }
 
-export default function CompetencyRadar({ data, selectedId, onSelect }: Props) {
+export default function CompetencyRadar({
+  data,
+  selectedId,
+  onSelect,
+  onScoreChange,
+}: Props) {
   const [anim, setAnim] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    segIndex: number;
+    startDist: number;
+    dragging: boolean;
+  } | null>(null);
 
   useEffect(() => {
     const t0 = performance.now();
@@ -37,77 +52,114 @@ export default function CompetencyRadar({ data, selectedId, onSelect }: Props) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const n = data.length;
-  const slice = 360 / n;
+  const hitTest = (clientX: number, clientY: number) => {
+    const el = containerRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    const x = clientX - rect.left - CX;
+    const y = clientY - rect.top - CY;
+    const dist = Math.sqrt(x * x + y * y);
+    const angleDeg = Math.atan2(-y, x) * (180 / Math.PI);
+    const cw = ((90 - angleDeg) % 360 + 360) % 360;
+    const segIndex = Math.floor(cw / (360 / data.length)) % data.length;
+    const zone = (OUTER - INNER) / LEVELS;
+    const level = Math.max(0, Math.min(LEVELS, Math.round((dist - INNER) / zone)));
+    return { segIndex, level, dist };
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    const hit = hitTest(e.clientX, e.clientY);
+    if (!hit || hit.dist > OUTER + 20) return;
+    dragRef.current = {
+      segIndex: hit.segIndex,
+      startDist: hit.dist,
+      dragging: false,
+    };
+    containerRef.current?.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const drag = dragRef.current;
+    if (!drag) return;
+    const hit = hitTest(e.clientX, e.clientY);
+    if (!hit) return;
+    if (!drag.dragging && Math.abs(hit.dist - drag.startDist) > 8) {
+      drag.dragging = true;
+    }
+    if (drag.dragging) {
+      onSelect(data[drag.segIndex].id);
+      onScoreChange(data[drag.segIndex].id, hit.level);
+    }
+  };
+
+  const handlePointerUp = () => {
+    const drag = dragRef.current;
+    if (drag && !drag.dragging) {
+      const id = data[drag.segIndex].id;
+      onSelect(id);
+      if (drag.startDist >= INNER * 0.5) {
+        const zone = (OUTER - INNER) / LEVELS;
+        const level = Math.max(0, Math.min(LEVELS, Math.round((drag.startDist - INNER) / zone)));
+        onScoreChange(id, level);
+      }
+    }
+    dragRef.current = null;
+  };
+
+  const pieData = data.map(() => ({ v: 1 }));
 
   return (
     <div
-      className="relative mx-auto"
-      style={{ width: CHART, height: CHART, overflow: "visible" }}
+      ref={containerRef}
+      className="mx-auto touch-none"
+      style={{ width: CHART, height: CHART }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
       <PieChart width={CHART} height={CHART}>
-        {data.map((item, i) => {
-          const sa = 90 - i * slice + GAP / 2;
-          const ea = 90 - (i + 1) * slice - GAP / 2;
-          const frac = item.score / item.maxScore;
-          const r = (MIN_R + frac * (MAX_R - MIN_R)) * anim;
-          const sel = item.id === selectedId;
+        {Array.from({ length: LEVELS }, (_, li) => {
+          const level = li + 1;
+          const ir = (INNER + li * (BAND + RING_GAP)) * anim;
+          const or = (INNER + li * (BAND + RING_GAP) + BAND) * anim;
 
           return (
             <Pie
-              key={item.id}
-              data={[{ v: 1 }]}
+              key={level}
+              data={pieData}
               cx={CX}
               cy={CY}
-              innerRadius={0}
-              outerRadius={sel ? r + 6 : r}
-              startAngle={sa}
-              endAngle={ea}
+              innerRadius={ir}
+              outerRadius={or}
+              startAngle={90}
+              endAngle={-270}
               dataKey="v"
+              paddingAngle={PAD_ANGLE}
               isAnimationActive={false}
-              onClick={() => onSelect(item.id)}
-              stroke={sel ? "#fff" : "rgba(255,255,255,0.08)"}
-              strokeWidth={sel ? 1.5 : 0.5}
             >
-              <Cell
-                fill={item.isTarget ? ORANGE : BLUE}
-                fillOpacity={sel ? 1 : 0.55}
-              />
+              {data.map((item) => {
+                const filled = item.score >= level;
+                const sel = item.id === selectedId;
+                return (
+                  <Cell
+                    key={item.id}
+                    fill={
+                      filled
+                        ? item.isTarget
+                          ? ORANGE_SHADES[li]
+                          : BLUE_SHADES[li]
+                        : "rgba(255,255,255,0.04)"
+                    }
+                    stroke={sel ? "#fff" : "none"}
+                    strokeWidth={sel ? 1.5 : 0}
+                  />
+                );
+              })}
             </Pie>
           );
         })}
       </PieChart>
-
-      {data.map((item, i) => {
-        const midDeg = 90 - (i + 0.5) * slice;
-        const midRad = (midDeg * Math.PI) / 180;
-        const x = CX + LABEL_R * Math.cos(midRad);
-        const y = CY - LABEL_R * Math.sin(midRad);
-        const cos = Math.cos(midRad);
-        const sel = item.id === selectedId;
-        const align: "left" | "right" | "center" =
-          cos > 0.3 ? "left" : cos < -0.3 ? "right" : "center";
-        const tx = cos > 0.3 ? "0%" : cos < -0.3 ? "-100%" : "-50%";
-
-        return (
-          <button
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className={`absolute text-[10px] leading-tight font-medium transition-colors duration-150 cursor-pointer ${
-              sel ? "text-white" : "text-gray-500 hover:text-gray-400"
-            }`}
-            style={{
-              left: x,
-              top: y,
-              transform: `translate(${tx}, -50%)`,
-              textAlign: align,
-              maxWidth: 75,
-            }}
-          >
-            {item.label}
-          </button>
-        );
-      })}
     </div>
   );
 }

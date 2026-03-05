@@ -20,7 +20,7 @@ export function useCompetencyData() {
     () => ({ ...(userData.scores as Record<string, number>) }),
   );
 
-  const targets = useMemo(() => new Set(userData.targets), []);
+  const targets = useMemo(() => new Set<string>(userData.targets), []);
 
   const data: CompetencyItem[] = useMemo(
     () =>

@@ -1,23 +1,29 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { useCompetencyData } from "../hooks/useCompetencyData";
 import CompetencyRadar from "./CompetencyRadar";
+import BehavioursView from "./BehavioursView";
 
 export default function Dashboard() {
   const { data, setScore } = useCompetencyData();
   const [selectedId, setSelectedId] = useState(data[0]?.id ?? "");
-  const [showSheet, setShowSheet] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const selected = data.find((d) => d.id === selectedId) ?? data[0];
+  const detailItem = detailId ? data.find((d) => d.id === detailId) : null;
+
+  if (detailItem) {
+    return <BehavioursView item={detailItem} onBack={() => setDetailId(null)} />;
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center">
+    <div className="h-full bg-black text-white flex flex-col items-center overflow-hidden">
       {/* Radar chart */}
-      <div className="pt-10 pb-6 px-10">
+      <div className="pt-8 pb-4">
         <CompetencyRadar
           data={data}
           selectedId={selectedId}
           onSelect={setSelectedId}
+          onScoreChange={setScore}
         />
       </div>
 
@@ -80,63 +86,16 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* View details trigger */}
+            {/* See behaviours */}
             <button
-              onClick={() => setShowSheet(true)}
+              onClick={() => setDetailId(selected.id)}
               className="w-full py-3 rounded-xl bg-[#1a1a1a] border border-[#333] text-sm font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer"
             >
-              View Details
+              See Behaviours
             </button>
           </div>
         </div>
       )}
-
-      {/* Behaviours bottom sheet */}
-      <AnimatePresence>
-        {showSheet && selected && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 z-40"
-              onClick={() => setShowSheet(false)}
-            />
-            <motion.div
-              key="sheet"
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 bg-[#111] border-t border-[#222] rounded-t-2xl max-h-[70vh] overflow-y-auto"
-            >
-              <div className="sticky top-0 bg-[#111] pt-3 pb-4 px-6 z-10">
-                <div className="w-10 h-1 bg-gray-700 rounded-full mx-auto mb-4" />
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">{selected.label}</h3>
-                  <button
-                    onClick={() => setShowSheet(false)}
-                    className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-                <p className="text-sm text-gray-500 mt-1">Behaviours</p>
-              </div>
-              <ul className="px-6 pb-10 space-y-4">
-                {selected.behaviours.map((b) => (
-                  <li key={b} className="flex items-start gap-3">
-                    <div className="mt-0.5 size-5 rounded border-2 border-gray-600 shrink-0" />
-                    <span className="text-sm text-gray-300">{b}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
