@@ -83,8 +83,8 @@ export default function Dashboard() {
         <BehavioursView item={detailItem} />
       ) : (
         <>
-          {/* Chart — fills available space, centered */}
-          <div className="flex-1 flex items-center justify-center min-h-0">
+          {/* Chart — top-aligned below app bar */}
+          <div className="shrink-0 flex justify-center">
             <CompetencyRadar
               data={data}
               selectedId={selectedId}
@@ -92,6 +92,9 @@ export default function Dashboard() {
               onScoreChange={setScore}
             />
           </div>
+
+          {/* Spacer pushes card to bottom */}
+          <div className="flex-1 min-h-0" />
 
           {/* Skill card anchored at bottom */}
           {selected && (

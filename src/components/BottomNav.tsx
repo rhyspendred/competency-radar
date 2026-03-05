@@ -64,7 +64,7 @@ const tabs = [
 
 export default function BottomNav() {
   return (
-    <nav className="shrink-0 border-t border-[#222] bg-black" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <nav className="shrink-0 border-t border-[#222] bg-black" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}>
       <div className="flex items-center justify-around h-14 max-w-md mx-auto">
         {tabs.map((tab) => (
           <button
