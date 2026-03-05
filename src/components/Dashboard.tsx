@@ -9,6 +9,9 @@ const SPRING = { type: "spring" as const, stiffness: 400, damping: 25 };
 const SIDE_MARGIN = 16;
 const MAX_WIDTH = 500;
 
+const BLUE_SHADES = ["#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1"];
+const ORANGE_SHADES = ["#fdba74", "#fb923c", "#f97316", "#ea580c", "#c2410c"];
+
 /* ── Animated score digit ─────────────────────────────────── */
 
 function AnimatedScore({ value }: { value: number }) {
@@ -19,20 +22,40 @@ function AnimatedScore({ value }: { value: number }) {
   }, [value]);
 
   return (
-    <span
-      className="relative inline-flex items-center justify-center overflow-hidden font-bold text-3xl tabular-nums"
-      style={{ height: "1.3em", minWidth: "0.65em" }}
-    >
+    <span className="inline-flex overflow-hidden tabular-nums" style={{ height: "1.15em" }}>
       <AnimatePresence initial={false} mode="popLayout">
         <motion.span
           key={value}
-          initial={{ y: dir * 28, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -dir * 28, opacity: 0 }}
+          initial={{ y: dir * 32 }}
+          animate={{ y: 0 }}
+          exit={{ y: -dir * 32 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="absolute"
         >
           {value}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function AnimatedLabel({ text, value }: { text: string; value: number }) {
+  const prev = useRef(value);
+  const dir = value > prev.current ? 1 : value < prev.current ? -1 : 0;
+  useEffect(() => {
+    prev.current = value;
+  }, [value]);
+
+  return (
+    <span className="inline-flex overflow-hidden" style={{ height: "1.3em" }}>
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.span
+          key={text}
+          initial={{ x: dir * 30, opacity: 0, filter: "blur(4px)" }}
+          animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
+          exit={{ x: -dir * 30, opacity: 0, filter: "blur(4px)" }}
+          transition={{ type: "spring", stiffness: 200, damping: 22 }}
+        >
+          {text}
         </motion.span>
       </AnimatePresence>
     </span>
@@ -182,7 +205,7 @@ export default function Dashboard() {
                   <div
                     className={`px-4 py-2.5 flex items-center justify-between gap-3 ${accent}`}
                   >
-                    <h2 className="text-sm font-bold text-white truncate">
+                    <h2 className="text-base font-bold text-white truncate">
                       {item.label}
                     </h2>
                     {item.isTarget && (
@@ -195,13 +218,21 @@ export default function Dashboard() {
                   {/* Body */}
                   <div className="px-4 pt-3 pb-4 space-y-3">
                     {/* Score row */}
-                    <div className="flex items-baseline gap-1">
-                      <AnimatedScore value={item.score} />
-                      <span className="text-base text-gray-500 font-medium">
-                        / {item.maxScore}
+                    <div className="flex items-center font-bold">
+                      <span className="text-4xl text-white">
+                        <AnimatedScore value={item.score} />
                       </span>
-                      <span className="text-xs text-gray-500 ml-auto">
-                        {item.scaleName}
+                      <span className="text-sm font-medium text-gray-600 mx-2">
+                        out of
+                      </span>
+                      <span className="text-4xl text-white">
+                        {item.maxScore}
+                      </span>
+                      <span className="text-2xl text-gray-300 ml-auto">
+                        <AnimatedLabel
+                          text={item.scaleName}
+                          value={item.score}
+                        />
                       </span>
                     </div>
 
@@ -210,13 +241,15 @@ export default function Dashboard() {
                       {Array.from({ length: item.maxScore }, (_, i) => (
                         <div
                           key={i}
-                          className={`h-2 flex-1 rounded-full transition-colors duration-200 ${
-                            i < item.score
-                              ? item.isTarget
-                                ? "bg-orange-500"
-                                : "bg-blue-500"
-                              : "bg-[#222]"
-                          }`}
+                          className="h-2 flex-1 rounded-full transition-colors duration-200"
+                          style={{
+                            backgroundColor:
+                              i < item.score
+                                ? item.isTarget
+                                  ? ORANGE_SHADES[i]
+                                  : BLUE_SHADES[i]
+                                : "#222",
+                          }}
                         />
                       ))}
                     </div>
@@ -257,7 +290,7 @@ export default function Dashboard() {
                           }}
                           className="flex-1 h-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-xs font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer"
                         >
-                          See Behaviours
+                          View Behaviours
                         </motion.button>
                       </div>
                     )}
