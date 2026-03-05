@@ -1,13 +1,11 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import tailwindcss from '@tailwindcss/vite'
-import { visualizer } from 'rollup-plugin-visualizer'
+import { q } from "framer-motion/client"
 
+// vite.config.ts
 export default defineConfig({
-plugins: [
-react(),
-tailwindcss(),
-visualizer({ filename: 'stats.html' })
-],
-base: '/competency-radar/',
-})
+    plugins: [
+      react(),
+      tailwindcss(),
+      visualizer({ filename: 'stats.html' })
+    ],
+    base: './', // Change this from '/competency-radar/' to './'
+  })
