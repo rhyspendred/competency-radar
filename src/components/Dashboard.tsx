@@ -1,5 +1,10 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, animate as fmAnimate } from "framer-motion";
+import { useState, useRef, useEffect, useMemo } from "react";
+import {
+  motion,
+  AnimatePresence,
+  animate as fmAnimate,
+  useMotionValue,
+} from "framer-motion";
 import { useCompetencyData } from "../hooks/useCompetencyData";
 import CompetencyRadar from "./CompetencyRadar";
 import BehavioursView from "./BehavioursView";
@@ -8,28 +13,44 @@ import BottomNav from "./BottomNav";
 const SPRING = { type: "spring" as const, stiffness: 400, damping: 25 };
 const SIDE_MARGIN = 16;
 const MAX_WIDTH = 500;
+const CARD_GAP = 12;
+const COPIES = 5;
 
 const BLUE_SHADES = ["#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1"];
-const ORANGE_SHADES = ["#fdba74", "#fb923c", "#f97316", "#ea580c", "#c2410c"];
+const ORANGE_SHADES = [
+  "#fdba74",
+  "#fb923c",
+  "#f97316",
+  "#ea580c",
+  "#c2410c",
+];
 
 /* ── Animated score digit ─────────────────────────────────── */
 
 function AnimatedScore({ value }: { value: number }) {
-  const prev = useRef(value);
-  const dir = value > prev.current ? 1 : value < prev.current ? -1 : 0;
-  useEffect(() => {
-    prev.current = value;
-  }, [value]);
+  const prevRef = useRef(value);
+  const dirRef = useRef(0);
+
+  if (value !== prevRef.current) {
+    dirRef.current = value > prevRef.current ? 1 : -1;
+    prevRef.current = value;
+  }
+
+  const dir = dirRef.current;
 
   return (
-    <span className="inline-flex overflow-hidden tabular-nums" style={{ height: "1.15em" }}>
-      <AnimatePresence initial={false} mode="popLayout">
+    <span
+      className="relative inline-block overflow-hidden tabular-nums text-center"
+      style={{ height: "1.15em", width: "0.65em" }}
+    >
+      <AnimatePresence initial={false}>
         <motion.span
           key={value}
-          initial={{ y: dir * 32 }}
-          animate={{ y: 0 }}
-          exit={{ y: -dir * 32 }}
+          initial={{ y: dir > 0 ? "100%" : "-100%" }}
+          animate={{ y: "0%" }}
+          exit={{ y: dir > 0 ? "-100%" : "100%" }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="absolute inset-x-0"
         >
           {value}
         </motion.span>
@@ -38,22 +59,28 @@ function AnimatedScore({ value }: { value: number }) {
   );
 }
 
+/* ── Animated label (scale name) ──────────────────────────── */
+
 function AnimatedLabel({ text, value }: { text: string; value: number }) {
-  const prev = useRef(value);
-  const dir = value > prev.current ? 1 : value < prev.current ? -1 : 0;
-  useEffect(() => {
-    prev.current = value;
-  }, [value]);
+  const prevRef = useRef(value);
+  const dirRef = useRef(0);
+
+  if (value !== prevRef.current) {
+    dirRef.current = value > prevRef.current ? 1 : -1;
+    prevRef.current = value;
+  }
+
+  const dir = dirRef.current;
 
   return (
     <span className="inline-flex overflow-hidden" style={{ height: "1.3em" }}>
       <AnimatePresence initial={false} mode="popLayout">
         <motion.span
           key={text}
-          initial={{ x: dir * 30, opacity: 0, filter: "blur(4px)" }}
+          initial={{ x: dir * 60, opacity: 0, filter: "blur(8px)" }}
           animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
-          exit={{ x: -dir * 30, opacity: 0, filter: "blur(4px)" }}
-          transition={{ type: "spring", stiffness: 200, damping: 22 }}
+          exit={{ x: -dir * 60, opacity: 0, filter: "blur(8px)" }}
+          transition={{ type: "spring", stiffness: 120, damping: 18 }}
         >
           {text}
         </motion.span>
@@ -66,16 +93,34 @@ function AnimatedLabel({ text, value }: { text: string; value: number }) {
 
 export default function Dashboard() {
   const { frameworkName, data, setScore } = useCompetencyData();
+  const n = data.length;
+  const midStart = Math.floor(COPIES / 2) * n;
+
   const [selectedId, setSelectedId] = useState(data[0]?.id ?? "");
   const [detailId, setDetailId] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const prevRef = useRef({ id: "", score: 0 });
   const [contentWidth, setContentWidth] = useState(0);
+
+  const repeated = useMemo(() => {
+    const arr: typeof data = [];
+    for (let c = 0; c < COPIES; c++) arr.push(...data);
+    return arr;
+  }, [data]);
 
   const selected = data.find((d) => d.id === selectedId) ?? data[0];
   const detailItem = detailId ? data.find((d) => d.id === detailId) : null;
 
+  const cardW = contentWidth || 280;
+  const stride = cardW + CARD_GAP;
+
+  /* Carousel position state */
+  const [activeTriIdx, setActiveTriIdx] = useState(midStart);
+  const prevTriIdx = useRef(midStart);
+  const x = useMotionValue(0);
+
+  /* Measure container width */
   useEffect(() => {
     const el = mainRef.current;
     if (!el) return;
@@ -88,23 +133,47 @@ export default function Dashboard() {
     return () => ro.disconnect();
   }, []);
 
+  /* Animate carousel x when activeTriIdx or sizing changes */
   useEffect(() => {
-    const card = scrollRef.current?.querySelector(
-      `[data-id="${selectedId}"]`,
-    ) as HTMLElement | null;
-    card?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  }, [selectedId]);
+    const containerW = mainRef.current?.clientWidth ?? 375;
+    const target = containerW / 2 - cardW / 2 - activeTriIdx * stride;
 
+    const idxChanged = activeTriIdx !== prevTriIdx.current;
+    prevTriIdx.current = activeTriIdx;
+
+    if (idxChanged) {
+      fmAnimate(x, target, { type: "spring", stiffness: 400, damping: 35 });
+    } else {
+      x.set(target);
+    }
+  }, [activeTriIdx, cardW, stride, x]);
+
+  /* Shortest-path wrap when selection changes */
+  useEffect(() => {
+    const targetDataIdx = data.findIndex((d) => d.id === selectedId);
+    if (targetDataIdx < 0) return;
+
+    setActiveTriIdx((prev) => {
+      const currentDataIdx = ((prev % n) + n) % n;
+      let delta = targetDataIdx - currentDataIdx;
+      if (delta > n / 2) delta -= n;
+      if (delta < -n / 2) delta += n;
+
+      let next = prev + delta;
+      if (next < 0 || next >= COPIES * n) {
+        next = midStart + targetDataIdx;
+      }
+      return next;
+    });
+  }, [selectedId, n, data, midStart]);
+
+  /* Glow on score increase */
   useEffect(() => {
     if (!selected) return;
     const prev = prevRef.current;
     if (prev.id === selected.id && selected.score > prev.score) {
-      const el = scrollRef.current?.querySelector(
-        `[data-id="${selected.id}"]`,
+      const el = carouselRef.current?.querySelector(
+        `[data-active="true"]`,
       ) as HTMLElement | null;
       if (el) {
         fmAnimate(
@@ -122,8 +191,6 @@ export default function Dashboard() {
     }
     prevRef.current = { id: selected.id, score: selected.score };
   }, [selected]);
-
-  const cardW = contentWidth || 280;
 
   return (
     <div
@@ -179,128 +246,125 @@ export default function Dashboard() {
         <BehavioursView item={detailItem} />
       ) : (
         <>
-          {/* Horizontal card carousel */}
-          <div
-            ref={scrollRef}
-            className="shrink-0 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar py-2"
-            style={{ paddingInline: `calc(50% - ${cardW / 2}px)` }}
-          >
-            {data.map((item) => {
-              const sel = item.id === selectedId;
-              const accent = item.isTarget ? "bg-orange-500" : "bg-blue-600";
-              return (
-                <motion.div
-                  key={item.id}
-                  data-id={item.id}
-                  animate={{
-                    scale: sel ? 1 : 0.93,
-                    opacity: sel ? 1 : 0.4,
-                  }}
-                  transition={SPRING}
-                  onClick={() => setSelectedId(item.id)}
-                  className="snap-center shrink-0 rounded-2xl overflow-hidden bg-[#111] border border-[#222] cursor-pointer"
-                  style={{ width: cardW }}
-                >
-                  {/* Colour header */}
-                  <div
-                    className={`px-4 py-2.5 flex items-center justify-between gap-3 ${accent}`}
+          {/* Wrapping card carousel */}
+          <div className="shrink-0 overflow-hidden py-2">
+            <motion.div
+              ref={carouselRef}
+              className="flex"
+              style={{ x, gap: CARD_GAP }}
+            >
+              {repeated.map((item, triIdx) => {
+                const isActive = triIdx === activeTriIdx;
+                return (
+                  <motion.div
+                    key={`${item.id}-${Math.floor(triIdx / n)}`}
+                    data-active={isActive ? "true" : undefined}
+                    animate={{
+                      scale: isActive ? 1 : 0.93,
+                      opacity: isActive ? 1 : 0.4,
+                    }}
+                    transition={SPRING}
+                    onClick={() => setSelectedId(item.id)}
+                    className="shrink-0 rounded-2xl overflow-hidden bg-[#111] border border-[#222] cursor-pointer"
+                    style={{ width: cardW }}
                   >
-                    <h2 className="text-base font-bold text-white truncate">
-                      {item.label}
-                    </h2>
-                    {item.isTarget && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white shrink-0">
-                        Target
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Body */}
-                  <div className="px-4 pt-3 pb-4 space-y-3">
-                    {/* Score row */}
-                    <div className="flex items-center font-bold">
-                      <span className="text-4xl text-white">
-                        <AnimatedScore value={item.score} />
-                      </span>
-                      <span className="text-sm font-medium text-gray-600 mx-2">
-                        out of
-                      </span>
-                      <span className="text-4xl text-white">
-                        {item.maxScore}
-                      </span>
-                      <span className="text-2xl text-gray-300 ml-auto">
-                        <AnimatedLabel
-                          text={item.scaleName}
-                          value={item.score}
-                        />
-                      </span>
+                    {/* Colour header */}
+                    <div
+                      className={`px-4 py-2.5 flex items-center justify-between gap-3 ${
+                        item.isTarget ? "bg-orange-500" : "bg-blue-600"
+                      }`}
+                    >
+                      <h2 className="text-base font-bold text-white truncate">
+                        {item.label}
+                      </h2>
+                      {item.isTarget && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white shrink-0">
+                          Target
+                        </span>
+                      )}
                     </div>
 
-                    {/* Progress bar — own line */}
-                    <div className="flex gap-1.5">
-                      {Array.from({ length: item.maxScore }, (_, i) => (
-                        <div
-                          key={i}
-                          className="h-2 flex-1 rounded-full transition-colors duration-200"
-                          style={{
-                            backgroundColor:
-                              i < item.score
-                                ? item.isTarget
-                                  ? ORANGE_SHADES[i]
-                                  : BLUE_SHADES[i]
-                                : "#222",
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Actions — selected card only */}
-                    {sel && (
-                      <div className="flex items-center gap-2 pt-1">
-                        <motion.button
-                          whileTap={{ scale: 0.95, opacity: 0.8 }}
-                          transition={SPRING}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setScore(item.id, item.score - 1);
-                          }}
-                          disabled={item.score <= 0}
-                          className="h-9 w-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-base font-bold text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                        >
-                          &minus;
-                        </motion.button>
-                        <motion.button
-                          whileTap={{ scale: 0.95, opacity: 0.8 }}
-                          transition={SPRING}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setScore(item.id, item.score + 1);
-                          }}
-                          disabled={item.score >= item.maxScore}
-                          className="h-9 w-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-base font-bold text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                        >
-                          +
-                        </motion.button>
-                        <motion.button
-                          whileTap={{ scale: 0.97, opacity: 0.8 }}
-                          transition={SPRING}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDetailId(item.id);
-                          }}
-                          className="flex-1 h-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-xs font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer"
-                        >
-                          View Behaviours
-                        </motion.button>
+                    {/* Body */}
+                    <div className="px-4 pt-3 pb-4 space-y-3">
+                      {/* Score row */}
+                      <div className="flex items-center font-bold">
+                        <span className="text-4xl text-white">
+                          <AnimatedScore value={item.score} />
+                        </span>
+                        <span className="text-2xl text-gray-300 ml-auto">
+                          <AnimatedLabel
+                            text={item.scaleName}
+                            value={item.score}
+                          />
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+
+                      {/* Progress bar */}
+                      <div className="flex gap-1.5">
+                        {Array.from({ length: item.maxScore }, (_, j) => (
+                          <div
+                            key={j}
+                            className="h-2 flex-1 rounded-full transition-colors duration-200"
+                            style={{
+                              backgroundColor:
+                                j < item.score
+                                  ? item.isTarget
+                                    ? ORANGE_SHADES[j]
+                                    : BLUE_SHADES[j]
+                                  : "#222",
+                            }}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Actions — active card only */}
+                      {isActive && (
+                        <div className="flex items-center gap-2 pt-1">
+                          <motion.button
+                            whileTap={{ scale: 0.95, opacity: 0.8 }}
+                            transition={SPRING}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setScore(item.id, item.score - 1);
+                            }}
+                            disabled={item.score <= 0}
+                            className="h-9 w-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-base font-bold text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                          >
+                            &minus;
+                          </motion.button>
+                          <motion.button
+                            whileTap={{ scale: 0.95, opacity: 0.8 }}
+                            transition={SPRING}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setScore(item.id, item.score + 1);
+                            }}
+                            disabled={item.score >= item.maxScore}
+                            className="h-9 w-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-base font-bold text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                          >
+                            +
+                          </motion.button>
+                          <motion.button
+                            whileTap={{ scale: 0.97, opacity: 0.8 }}
+                            transition={SPRING}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDetailId(item.id);
+                            }}
+                            className="flex-1 h-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-xs font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer"
+                          >
+                            View Behaviours
+                          </motion.button>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
 
-          {/* Chart — fills remaining vertical space */}
+          {/* Chart */}
           <div className="flex-1 min-h-0">
             <CompetencyRadar
               data={data}

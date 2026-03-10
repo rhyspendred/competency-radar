@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Competency Radar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first web app for tracking and visualising competency levels across a skill framework. Built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+Currently ships with the **UX Competency Framework** by David Travis, covering 8 competency areas rated on a Novice-to-Expert scale.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Interactive radar chart** -- concentric-ring visualisation of all competencies at a glance. Tap a segment to select it, or drag radially to adjust the level.
+- **Card carousel** -- horizontally scrollable cards with animated score transitions, colour-coded progress bars, and a wrapping loop so navigation feels continuous.
+- **Behaviours view** -- drill into each competency to see the full list of behaviours that define each level.
+- **OLED-optimised** -- true black (#000000) background designed for OLED displays.
+- **Mobile-native feel** -- viewport-locked layout, scroll/bounce prevention, CSS safe-area support for iOS (Dynamic Island, home indicator), and visual haptic feedback via Framer Motion.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+| Layer | Library |
+|-------|---------|
+| UI | React 19, TypeScript |
+| Build | Vite 7 |
+| Styling | Tailwind CSS 4 |
+| Charts | Recharts |
+| Animation | Framer Motion |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start dev server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Type-check
+npx tsc --noEmit
+
+# Production build
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Data
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Competency definitions live in `src/data/ux-framework.json` and user scores in `src/data/user-data.json`. The app merges these at runtime via the `useCompetencyData` hook, defaulting any missing scores to 0.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+
 ```
+src/
+  components/
+    CompetencyRadar.tsx   # Interactive concentric-ring chart
+    Dashboard.tsx         # Main view (carousel + chart + nav)
+    BehavioursView.tsx    # Full-screen behaviours list
+    BottomNav.tsx         # Bottom navigation bar
+  hooks/
+    useCompetencyData.ts  # Merges framework + user data
+  data/
+    ux-framework.json     # Competency framework definition
+    user-data.json        # User scores and targets
+```
+
+## Deployment
+
+A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys to GitHub Pages on push to `main`.
