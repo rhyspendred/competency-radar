@@ -64,8 +64,8 @@ export default function CompetencyDebugView() {
           {expanded.has(item.id) && (
             <ul className="space-y-1 pl-3 border-l-2 border-gray-700">
               {item.behaviours.map((b) => (
-                <li key={b} className="text-sm text-gray-300">
-                  {b}
+                <li key={b.id} className="text-sm text-gray-300">
+                  {b.text}
                 </li>
               ))}
             </ul>

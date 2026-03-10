@@ -272,7 +272,7 @@ function AboutDrawer({ onClose }: { onClose: () => void }) {
 /* ── Dashboard ────────────────────────────────────────────── */
 
 export default function Dashboard() {
-  const { frameworkName, data, setScore, toggleDevelopment } = useCompetencyData();
+  const { frameworkId, frameworkName, data, setScore, toggleDevelopment } = useCompetencyData();
   const n = data.length;
   const midStart = Math.floor(COPIES / 2) * n;
 
@@ -424,7 +424,7 @@ export default function Dashboard() {
 
       {/* Content area */}
       {detailItem ? (
-        <BehavioursView item={detailItem} />
+        <BehavioursView item={detailItem} frameworkId={frameworkId} />
       ) : (
         <>
           {/* Wrapping card carousel */}

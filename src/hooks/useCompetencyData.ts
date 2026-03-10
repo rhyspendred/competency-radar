@@ -9,7 +9,7 @@ export interface CompetencyItem {
   maxScore: number;
   scaleName: string;
   isDevelopment: boolean;
-  behaviours: string[];
+  behaviours: { id: string; text: string }[];
 }
 
 const scale = framework.scale as Record<string, string>;
@@ -57,5 +57,11 @@ export function useCompetencyData() {
     });
   };
 
-  return { frameworkName: framework.name, data, setScore, toggleDevelopment };
+  return {
+    frameworkId: framework.frameworkId,
+    frameworkName: framework.name,
+    data,
+    setScore,
+    toggleDevelopment,
+  };
 }

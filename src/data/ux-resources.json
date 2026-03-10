@@ -1,0 +1,21 @@
+{
+  "frameworkId": "david-travis-ux-v1",
+  "resources": {
+    "plan-moderate-usability-tests": [
+      { "type": "book", "title": "Rocket Surgery Made Easy", "author": "Steve Krug" },
+      { "type": "book", "title": "Usability Inspection Methods", "author": "Nielsen & Mack" },
+      { "type": "video", "title": "Running Your First Usability Test", "url": "https://www.nngroup.com/videos/running-usability-tests/" },
+      { "type": "topic", "title": "Think-Aloud Protocol" },
+      { "type": "training", "title": "NNg Usability Testing Course", "url": "https://www.nngroup.com/courses/usability-testing/" }
+    ],
+    "conduct-expert-heuristic-reviews": [
+      { "type": "book", "title": "Usability Inspection Methods", "author": "Nielsen & Mack" },
+      { "type": "topic", "title": "Nielsen's 10 Heuristics" },
+      { "type": "article", "title": "10 Usability Heuristics for User Interface Design", "url": "https://www.nngroup.com/articles/ten-usability-heuristics/" }
+    ],
+    "analyse-report-usability-findings": [
+      { "type": "topic", "title": "Severity Ratings" },
+      { "type": "article", "title": "How to Report Usability Test Findings", "url": "https://www.nngroup.com/articles/report-usability-test-findings/" }
+    ]
+  }
+}

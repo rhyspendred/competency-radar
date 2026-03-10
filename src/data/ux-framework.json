@@ -14,85 +14,85 @@
         "id": "user-research",
         "label": "User Research",
         "behaviours": [
-          "Articulate the importance of user research, not just before the system is designed but also during design and after deployment.",
-          "Identify the potential users of the system.",
-          "Plan site visits to end users, including deciding who to sample.",
-          "Structure an effective interview that gets beyond the surface opinions (what users say) to reveal user goals (what users want).",
-          "Keep appropriate records of each observation.",
-          "Analyse qualitative data from a site visit.",
-          "Present the data from a site visit in ways that can be used to drive design: for example, personas, user stories, user journey maps.",
-          "Analyse and interpret existing data (for example web analytics, user surveys, customer support calls).",
-          "Critically evaluate previous user research."
+          { "id": "articulate-importance-user-research", "text": "Articulate the importance of user research, not just before the system is designed but also during design and after deployment." },
+          { "id": "identify-potential-users", "text": "Identify the potential users of the system." },
+          { "id": "plan-site-visits-end-users", "text": "Plan site visits to end users, including deciding who to sample." },
+          { "id": "structure-effective-interview", "text": "Structure an effective interview that gets beyond the surface opinions (what users say) to reveal user goals (what users want)." },
+          { "id": "keep-appropriate-records", "text": "Keep appropriate records of each observation." },
+          { "id": "analyse-qualitative-data-site-visit", "text": "Analyse qualitative data from a site visit." },
+          { "id": "present-data-site-visit", "text": "Present the data from a site visit in ways that can be used to drive design: for example, personas, user stories, user journey maps." },
+          { "id": "analyse-interpret-existing-data", "text": "Analyse and interpret existing data (for example web analytics, user surveys, customer support calls)." },
+          { "id": "critically-evaluate-previous-user-research", "text": "Critically evaluate previous user research." }
         ]
       },
       {
         "id": "usability-eval",
         "label": "Usability Evaluation",
         "behaviours": [
-          "Plan and moderate usability tests",
-          "Conduct expert/heuristic reviews",
-          "Analyse and report usability findings",
-          "Measure task success and time-on-task"
+          { "id": "plan-moderate-usability-tests", "text": "Plan and moderate usability tests" },
+          { "id": "conduct-expert-heuristic-reviews", "text": "Conduct expert/heuristic reviews" },
+          { "id": "analyse-report-usability-findings", "text": "Analyse and report usability findings" },
+          { "id": "measure-task-success-time-on-task", "text": "Measure task success and time-on-task" }
         ]
       },
       {
         "id": "info-arch",
         "label": "Information Architecture",
         "behaviours": [
-          "Create sitemaps and navigation flows",
-          "Conduct card sorting exercises",
-          "Design taxonomy and labelling systems",
-          "Organise complex content structures"
+          { "id": "create-sitemaps-navigation-flows", "text": "Create sitemaps and navigation flows" },
+          { "id": "conduct-card-sorting-exercises", "text": "Conduct card sorting exercises" },
+          { "id": "design-taxonomy-labelling-systems", "text": "Design taxonomy and labelling systems" },
+          { "id": "organise-complex-content-structures", "text": "Organise complex content structures" }
         ]
       },
       {
         "id": "int-design",
         "label": "Interaction Design",
         "behaviours": [
-          "Create wireframes and interactive prototypes",
-          "Design for accessibility and inclusivity",
-          "Define UI patterns and design systems",
-          "Specify micro-interactions and transitions"
+          { "id": "create-wireframes-interactive-prototypes", "text": "Create wireframes and interactive prototypes" },
+          { "id": "design-accessibility-inclusivity", "text": "Design for accessibility and inclusivity" },
+          { "id": "define-ui-patterns-design-systems", "text": "Define UI patterns and design systems" },
+          { "id": "specify-micro-interactions-transitions", "text": "Specify micro-interactions and transitions" }
         ]
       },
       {
         "id": "visual-design",
         "label": "Visual Design",
         "behaviours": [
-          "Apply colour theory and typography",
-          "Create high-fidelity UI mockups",
-          "Ensure brand consistency across touchpoints",
-          "Design for different screen densities (Retina/OLED)"
+          { "id": "apply-colour-theory-typography", "text": "Apply colour theory and typography" },
+          { "id": "create-high-fidelity-ui-mockups", "text": "Create high-fidelity UI mockups" },
+          { "id": "ensure-brand-consistency-across-touchpoints", "text": "Ensure brand consistency across touchpoints" },
+          { "id": "design-different-screen-densities", "text": "Design for different screen densities (Retina/OLED)" }
         ]
       },
       {
         "id": "writing",
         "label": "Technical Writing",
         "behaviours": [
-          "Write clear microcopy and UI labels",
-          "Document user requirements and specs",
-          "Create help documentation and guides",
-          "Maintain a consistent tone of voice"
+          { "id": "write-clear-microcopy-ui-labels", "text": "Write clear microcopy and UI labels" },
+          { "id": "document-user-requirements-specs", "text": "Document user requirements and specs" },
+          { "id": "create-help-documentation-guides", "text": "Create help documentation and guides" },
+          { "id": "maintain-consistent-tone-voice", "text": "Maintain a consistent tone of voice" }
         ]
       },
       {
         "id": "strategy",
         "label": "User Strategy",
         "behaviours": [
-          "Align UX goals with business objectives",
-          "Create customer journey maps",
-          "Define value propositions",
-          "Facilitate stakeholder workshops"
+          { "id": "align-ux-goals-business-objectives", "text": "Align UX goals with business objectives" },
+          { "id": "create-customer-journey-maps", "text": "Create customer journey maps" },
+          { "id": "define-value-propositions", "text": "Define value propositions" },
+          { "id": "facilitate-stakeholder-workshops", "text": "Facilitate stakeholder workshops" }
         ]
       },
       {
         "id": "management",
         "label": "UX Management",
         "behaviours": [
-          "Mentor junior designers",
-          "Stay updated on industry trends",
-          "Contribute to the design community",
-          "Manage project timelines and budgets"
+          { "id": "mentor-junior-designers", "text": "Mentor junior designers" },
+          { "id": "stay-updated-industry-trends", "text": "Stay updated on industry trends" },
+          { "id": "contribute-design-community", "text": "Contribute to the design community" },
+          { "id": "manage-project-timelines-budgets", "text": "Manage project timelines and budgets" }
         ]
       }
     ]
