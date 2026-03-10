@@ -53,9 +53,17 @@ function MenuIcon({ path }: { path: string }) {
   );
 }
 
-/* ── Animated level label ("3: Proficient") ───────────────── */
+/* ── Animated level display ────────────────────────────────── */
 
-function AnimatedLevel({ score, label }: { score: number; label: string }) {
+function AnimatedLevel({
+  score,
+  label,
+  accentClass,
+}: {
+  score: number;
+  label: string;
+  accentClass: string;
+}) {
   const prevRef = useRef(score);
   const dirRef = useRef(0);
 
@@ -65,24 +73,31 @@ function AnimatedLevel({ score, label }: { score: number; label: string }) {
   }
 
   const dir = dirRef.current;
-  const text = `${score}: ${label}`;
+  const key = `${score}-${label}`;
 
   return (
     <span
-      className="relative inline-block overflow-hidden"
-      style={{ height: "1.3em" }}
+      className="relative inline-flex items-baseline overflow-hidden"
+      style={{ height: "1.4em" }}
     >
-      <span className="invisible whitespace-nowrap">{text}</span>
+      <span className="invisible whitespace-nowrap">
+        <span>Level {score}</span>
+        <span className="ml-2">{label}</span>
+      </span>
       <AnimatePresence initial={false}>
         <motion.span
-          key={text}
+          key={key}
           initial={{ y: dir > 0 ? "100%" : "-100%" }}
           animate={{ y: "0%" }}
           exit={{ y: dir > 0 ? "-100%" : "100%" }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
-          className="absolute inset-x-0 whitespace-nowrap"
+          className="absolute inset-x-0 whitespace-nowrap flex items-baseline"
         >
-          {text}
+          <span className={`text-[10px] uppercase tracking-widest ${accentClass}`}>
+            Level
+          </span>
+          <span className="font-bold ml-1">{score}</span>
+          <span className="font-normal text-gray-400 ml-2">{label}</span>
         </motion.span>
       </AnimatePresence>
     </span>
@@ -453,24 +468,18 @@ export default function Dashboard() {
                         item.isDevelopment ? "bg-orange-500" : "bg-blue-600"
                       }`}
                     >
-                      <h2 className="text-base font-bold text-white truncate">
+                      <h2 className="text-xl font-bold text-white truncate">
                         {item.label}
                       </h2>
                     </div>
 
                     <div className="px-4 pt-3 pb-4 space-y-3">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-widest shrink-0 ${
-                            item.isDevelopment ? "text-orange-400" : "text-blue-400"
-                          }`}
-                        >
-                          Level
-                        </span>
-                        <span className="text-2xl font-bold text-white flex-1">
+                      <div className="flex items-center gap-1">
+                        <span className="text-xl text-white flex-1">
                           <AnimatedLevel
                             score={item.score}
                             label={item.scaleName}
+                            accentClass={item.isDevelopment ? "text-orange-400" : "text-blue-400"}
                           />
                         </span>
                         {isActive && (
