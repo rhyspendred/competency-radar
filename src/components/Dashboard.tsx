@@ -265,6 +265,8 @@ export default function Dashboard() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [drawerId, setDrawerId] = useState<string | null>(null);
+  const [aodTip, setAodTip] = useState(false);
+  const aodTipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const prevRef = useRef({ id: "", score: 0 });
@@ -472,25 +474,56 @@ export default function Dashboard() {
                           />
                         </span>
                         {isActive && (
-                          <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleDevelopment(item.id);
-                            }}
-                            disabled={item.score < 1 || item.score >= item.maxScore}
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
-                              item.isDevelopment
-                                ? "bg-orange-500/20 border-orange-500/40 text-orange-400"
-                                : "bg-[#1a1a1a] border-[#333] text-gray-600"
-                            }`}
-                            title={item.isDevelopment ? "Remove development goal" : "Mark as development goal"}
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M12 19V5" />
-                              <path d="M5 12l7-7 7 7" />
-                            </svg>
-                          </motion.button>
+                          <div className="relative shrink-0">
+                            <AnimatePresence>
+                              {aodTip && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.15 }}
+                                  className="absolute bottom-full right-0 mb-1.5 whitespace-nowrap rounded-lg bg-[#222] border border-[#333] px-2.5 py-1.5 text-[10px] text-gray-300 pointer-events-none z-10"
+                                >
+                                  {item.isDevelopment ? "Remove development goal" : "Mark as development goal"}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                            <motion.button
+                              whileTap={{ scale: 0.9 }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDevelopment(item.id);
+                              }}
+                              onPointerDown={() => {
+                                aodTipTimer.current = setTimeout(() => setAodTip(true), 500);
+                              }}
+                              onPointerUp={() => {
+                                if (aodTipTimer.current) clearTimeout(aodTipTimer.current);
+                                aodTipTimer.current = null;
+                                if (aodTip) setTimeout(() => setAodTip(false), 1500);
+                              }}
+                              onPointerLeave={() => {
+                                if (aodTipTimer.current) clearTimeout(aodTipTimer.current);
+                                aodTipTimer.current = null;
+                                setAodTip(false);
+                              }}
+                              disabled={item.score < 1 || item.score >= item.maxScore}
+                              className={`w-9 h-10 rounded-lg flex flex-col items-center justify-center border transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                                item.isDevelopment
+                                  ? "bg-orange-500/20 border-orange-500/40 text-orange-400"
+                                  : "bg-[#1a1a1a] border-[#333] text-gray-600"
+                              }`}
+                              title={item.isDevelopment ? "Remove development goal" : "Mark as development goal"}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 19V5" />
+                                <path d="M5 12l7-7 7 7" />
+                              </svg>
+                              <span className="text-[7px] leading-none mt-0.5 font-semibold uppercase tracking-wide">
+                                AoD
+                              </span>
+                            </motion.button>
+                          </div>
                         )}
                       </div>
 
