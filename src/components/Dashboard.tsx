@@ -29,7 +29,7 @@ const MENU_ITEMS = [
   { id: "frameworks", label: "Frameworks", icon: "M12 2L2 7l10 5 10-5-10-5z|M2 17l10 5 10-5|M2 12l10 5 10-5", hasDrawer: false },
   { id: "export", label: "Export Data", icon: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4|M7 10l5 5 5-5|M12 15V3", hasDrawer: false },
   { id: "settings", label: "Settings", icon: "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z|M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z", hasDrawer: false },
-  { id: "about", label: "About", icon: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z|M12 16v-4|M12 8h.01", hasDrawer: false },
+  { id: "about", label: "About", icon: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z|M12 16v-4|M12 8h.01", hasDrawer: true },
 ];
 
 /* ── SVG icon helper ──────────────────────────────────────── */
@@ -53,56 +53,23 @@ function MenuIcon({ path }: { path: string }) {
   );
 }
 
-/* ── Animated score digit ─────────────────────────────────── */
+/* ── Animated level label ("3: Proficient") ───────────────── */
 
-function AnimatedScore({ value }: { value: number }) {
-  const prevRef = useRef(value);
+function AnimatedLevel({ score, label }: { score: number; label: string }) {
+  const prevRef = useRef(score);
   const dirRef = useRef(0);
 
-  if (value !== prevRef.current) {
-    dirRef.current = value > prevRef.current ? 1 : -1;
-    prevRef.current = value;
+  if (score !== prevRef.current) {
+    dirRef.current = score > prevRef.current ? 1 : -1;
+    prevRef.current = score;
   }
 
   const dir = dirRef.current;
+  const text = `${score}: ${label}`;
 
   return (
     <span
-      className="relative inline-block overflow-hidden tabular-nums text-center"
-      style={{ height: "1.15em", width: "0.65em" }}
-    >
-      <AnimatePresence initial={false}>
-        <motion.span
-          key={value}
-          initial={{ y: dir > 0 ? "100%" : "-100%" }}
-          animate={{ y: "0%" }}
-          exit={{ y: dir > 0 ? "-100%" : "100%" }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="absolute inset-x-0"
-        >
-          {value}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
-}
-
-/* ── Animated label (scale name) ──────────────────────────── */
-
-function AnimatedLabel({ text, value }: { text: string; value: number }) {
-  const prevRef = useRef(value);
-  const dirRef = useRef(0);
-
-  if (value !== prevRef.current) {
-    dirRef.current = value > prevRef.current ? 1 : -1;
-    prevRef.current = value;
-  }
-
-  const dir = dirRef.current;
-
-  return (
-    <span
-      className="relative inline-block overflow-hidden text-right"
+      className="relative inline-block overflow-hidden"
       style={{ height: "1.3em" }}
     >
       <span className="invisible whitespace-nowrap">{text}</span>
@@ -112,8 +79,8 @@ function AnimatedLabel({ text, value }: { text: string; value: number }) {
           initial={{ y: dir > 0 ? "100%" : "-100%" }}
           animate={{ y: "0%" }}
           exit={{ y: dir > 0 ? "-100%" : "100%" }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="absolute inset-x-0 whitespace-nowrap text-right"
+          transition={{ type: "spring", stiffness: 400, damping: 28 }}
+          className="absolute inset-x-0 whitespace-nowrap"
         >
           {text}
         </motion.span>
@@ -189,6 +156,99 @@ function ProfileDrawer({ onClose }: { onClose: () => void }) {
           </label>
           <p className="text-sm text-gray-400 px-1">—</p>
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Drawer content: About ─────────────────────────────────── */
+
+function AboutDrawer({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ x: "100%" }}
+      animate={{ x: 0 }}
+      exit={{ x: "100%" }}
+      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+      className="absolute inset-0 z-50 bg-black flex flex-col"
+    >
+      <header className="shrink-0 h-11 flex items-center px-4 gap-3">
+        <motion.button
+          whileTap={{ scale: 0.95, opacity: 0.8 }}
+          transition={SPRING}
+          onClick={onClose}
+          className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+        >
+          &larr; Back
+        </motion.button>
+        <h2 className="text-sm font-semibold text-white">About</h2>
+      </header>
+
+      <div className="flex-1 overflow-y-auto px-5 pb-8 space-y-8">
+        <div className="space-y-3 pt-4">
+          <h3 className="text-lg font-bold text-white">Competency Radar</h3>
+          <p className="text-sm text-gray-400 leading-relaxed">
+            A tool for visualising and tracking competency levels across
+            any skill framework. Map your strengths, spot gaps, and plan
+            your professional development.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500">
+            Included frameworks
+          </h4>
+          <div className="rounded-xl bg-[#111] border border-[#222] px-4 py-4 space-y-2">
+            <p className="text-sm font-semibold text-white">
+              UX Competency Framework
+            </p>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Based on{" "}
+              <em className="not-italic text-blue-400">
+                The 8 Competencies of User Experience
+              </em>{" "}
+              by David Travis (2017).
+            </p>
+            <a
+              href="https://www.userfocus.co.uk/articles/8-competencies-of-user-experience.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              Read the original article
+            </a>
+          </div>
+          <p className="text-xs text-gray-600 px-1">
+            More frameworks coming soon.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500">
+            Credits
+          </h4>
+          <p className="text-sm text-gray-400">
+            Developed by Rhys Pendred, 2026.
+          </p>
+        </div>
+
+        <p className="text-[10px] text-gray-700 pt-4">
+          Competency Radar v0.1
+        </p>
       </div>
     </motion.div>
   );
@@ -402,14 +462,18 @@ export default function Dashboard() {
                     </div>
 
                     <div className="px-4 pt-3 pb-4 space-y-3">
-                      <div className="flex items-center font-bold">
-                        <span className="text-4xl text-white">
-                          <AnimatedScore value={item.score} />
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-widest shrink-0 ${
+                            item.isTarget ? "text-orange-400" : "text-blue-400"
+                          }`}
+                        >
+                          Level
                         </span>
-                        <span className="text-2xl text-gray-300 ml-auto">
-                          <AnimatedLabel
-                            text={item.scaleName}
-                            value={item.score}
+                        <span className="text-2xl font-bold text-white">
+                          <AnimatedLevel
+                            score={item.score}
+                            label={item.scaleName}
                           />
                         </span>
                       </div>
@@ -464,8 +528,12 @@ export default function Dashboard() {
                               e.stopPropagation();
                               setDetailId(item.id);
                             }}
-                            className="flex-1 h-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-xs font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer"
+                            className="flex-1 h-9 rounded-lg bg-[#1a1a1a] border border-[#333] text-xs font-medium text-gray-300 hover:text-white hover:border-[#444] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                           >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
                             View Behaviours
                           </motion.button>
                         </div>
@@ -575,6 +643,9 @@ export default function Dashboard() {
       <AnimatePresence>
         {drawerId === "profile" && (
           <ProfileDrawer onClose={() => setDrawerId(null)} />
+        )}
+        {drawerId === "about" && (
+          <AboutDrawer onClose={() => setDrawerId(null)} />
         )}
       </AnimatePresence>
     </div>
