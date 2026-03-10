@@ -1,21 +1,37 @@
 {
   "frameworkId": "david-travis-ux-v1",
   "resources": {
-    "plan-moderate-usability-tests": [
-      { "type": "book", "title": "Rocket Surgery Made Easy", "author": "Steve Krug" },
-      { "type": "book", "title": "Usability Inspection Methods", "author": "Nielsen & Mack" },
-      { "type": "video", "title": "Running Your First Usability Test", "url": "https://www.nngroup.com/videos/running-usability-tests/" },
-      { "type": "topic", "title": "Think-Aloud Protocol" },
-      { "type": "training", "title": "NNg Usability Testing Course", "url": "https://www.nngroup.com/courses/usability-testing/" }
+    "choose-evaluation-method": [
+      { "type": "article", "title": "When to Use Which User-Experience Research Methods", "url": "https://www.nngroup.com/articles/which-ux-research-methods/" }
     ],
-    "conduct-expert-heuristic-reviews": [
+    "interpret-usability-principles": [
       { "type": "book", "title": "Usability Inspection Methods", "author": "Nielsen & Mack" },
       { "type": "topic", "title": "Nielsen's 10 Heuristics" },
       { "type": "article", "title": "10 Usability Heuristics for User Interface Design", "url": "https://www.nngroup.com/articles/ten-usability-heuristics/" }
     ],
-    "analyse-report-usability-findings": [
-      { "type": "topic", "title": "Severity Ratings" },
-      { "type": "article", "title": "How to Report Usability Test Findings", "url": "https://www.nngroup.com/articles/report-usability-test-findings/" }
+    "plan-administer-usability-evaluation": [
+      { "type": "book", "title": "Rocket Surgery Made Easy", "author": "Steve Krug" },
+      { "type": "topic", "title": "Think-Aloud Protocol" },
+      { "type": "training", "title": "NNg Usability Testing Course", "url": "https://www.nngroup.com/courses/usability-testing/" }
+    ],
+    "analyse-usability-evaluation-data": [
+      { "type": "topic", "title": "Task Success Metrics" }
+    ],
+    "prioritise-usability-problems": [
+      { "type": "topic", "title": "Severity Ratings" }
+    ],
+    "run-card-sorting-sessions": [
+      { "type": "article", "title": "Card Sorting: Uncover Users' Mental Models", "url": "https://www.nngroup.com/articles/card-sorting-definition/" }
+    ],
+    "choose-ui-patterns": [
+      { "type": "book", "title": "Designing Interfaces", "author": "Jenifer Tidwell" }
+    ],
+    "create-interactive-electronic-prototypes": [
+      { "type": "tool", "title": "Figma" },
+      { "type": "tool", "title": "Axure RP" }
+    ],
+    "write-plain-english": [
+      { "type": "book", "title": "Letting Go of the Words", "author": "Janice Redish" }
     ]
   }
 }

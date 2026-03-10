@@ -9,8 +9,8 @@
       "int-design": 5,
       "visual-design": 3,
       "writing": 2,
-      "strategy": 4,
-      "management": 3
+      "ui-prototyping": 4,
+      "ux-leadership": 3
     },
-    "areas-of-development": ["strategy"]
+    "areas-of-development": ["ui-prototyping"]
   }

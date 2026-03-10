@@ -29,70 +29,97 @@
         "id": "usability-eval",
         "label": "Usability Evaluation",
         "behaviours": [
-          { "id": "plan-moderate-usability-tests", "text": "Plan and moderate usability tests" },
-          { "id": "conduct-expert-heuristic-reviews", "text": "Conduct expert/heuristic reviews" },
-          { "id": "analyse-report-usability-findings", "text": "Analyse and report usability findings" },
-          { "id": "measure-task-success-time-on-task", "text": "Measure task success and time-on-task" }
+          { "id": "choose-evaluation-method", "text": "Choose the most appropriate evaluation method (e.g. formative v summative test, moderated v unmoderated test, lab v remote test, usability testing v expert review, usability testing v A/B test, usability testing v survey)." },
+          { "id": "interpret-usability-principles", "text": "Interpret usability principles and guidelines and use them to identify likely problems in user interfaces." },
+          { "id": "design-experiment-control-variables", "text": "Understand how to design an experiment, and how to control and measure variables." },
+          { "id": "plan-administer-usability-evaluation", "text": "Plan and administer different types of usability evaluation." },
+          { "id": "log-usability-evaluation-data", "text": "Log the data from usability evaluations." },
+          { "id": "analyse-usability-evaluation-data", "text": "Analyse the data from usability evaluations." },
+          { "id": "measure-usability", "text": "Measure usability." },
+          { "id": "prioritise-usability-problems", "text": "Prioritise usability problems." },
+          { "id": "choose-format-sharing-findings", "text": "Choose the most appropriate format for sharing findings and recommendations: for example, a report, a presentation, a daily stand-up or a highlights video." },
+          { "id": "persuade-team-action-results", "text": "Persuade the design team to take action on the results." }
         ]
       },
       {
         "id": "info-arch",
         "label": "Information Architecture",
         "behaviours": [
-          { "id": "create-sitemaps-navigation-flows", "text": "Create sitemaps and navigation flows" },
-          { "id": "conduct-card-sorting-exercises", "text": "Conduct card sorting exercises" },
-          { "id": "design-taxonomy-labelling-systems", "text": "Design taxonomy and labelling systems" },
-          { "id": "organise-complex-content-structures", "text": "Organise complex content structures" }
+          { "id": "establish-flow-service-design", "text": "Establish the flow between a person and a product, service, or environment ('service design')." },
+          { "id": "uncover-describe-user-models", "text": "Uncover and describe users' models of the work domain." },
+          { "id": "organise-structure-label-content", "text": "Organise, structure and label content, functions and features." },
+          { "id": "choose-design-patterns-organising-content", "text": "Choose between different design patterns for organising content (such as faceted navigation, tagging, hub and spoke etc)." },
+          { "id": "develop-controlled-vocabulary", "text": "Develop a controlled vocabulary." },
+          { "id": "articulate-importance-use-metadata", "text": "Articulate the importance and use of metadata." },
+          { "id": "analyse-search-logs", "text": "Analyse search logs." },
+          { "id": "run-card-sorting-sessions", "text": "Run online and offline card sorting sessions." }
         ]
       },
       {
         "id": "int-design",
         "label": "Interaction Design",
         "behaviours": [
-          { "id": "create-wireframes-interactive-prototypes", "text": "Create wireframes and interactive prototypes" },
-          { "id": "design-accessibility-inclusivity", "text": "Design for accessibility and inclusivity" },
-          { "id": "define-ui-patterns-design-systems", "text": "Define UI patterns and design systems" },
-          { "id": "specify-micro-interactions-transitions", "text": "Specify micro-interactions and transitions" }
+          { "id": "choose-ui-patterns", "text": "Choose between different user interface patterns (for example, Wizards, Organiser Workspaces and Coach Marks)." },
+          { "id": "use-correct-ui-grammar", "text": "Use the correct user interface 'grammar': e.g., choosing the correct control in an interface, such as checkbox v radio button." },
+          { "id": "describe-ui-interaction-behaviour", "text": "Describe how a specific user interface interaction will behave (for example, pinch to zoom)." },
+          { "id": "create-ui-animations", "text": "Create user interface animations." },
+          { "id": "create-affordances", "text": "Create affordances within a user interface." },
+          { "id": "create-design-ideas", "text": "Create design ideas toward a solution." },
+          { "id": "sketch-tell-user-centred-stories", "text": "Sketch and tell user-centred stories about the way an interaction should work." }
         ]
       },
       {
         "id": "visual-design",
         "label": "Visual Design",
         "behaviours": [
-          { "id": "apply-colour-theory-typography", "text": "Apply colour theory and typography" },
-          { "id": "create-high-fidelity-ui-mockups", "text": "Create high-fidelity UI mockups" },
-          { "id": "ensure-brand-consistency-across-touchpoints", "text": "Ensure brand consistency across touchpoints" },
-          { "id": "design-different-screen-densities", "text": "Design for different screen densities (Retina/OLED)" }
+          { "id": "use-visual-design-principles", "text": "Use fundamental principles of visual design (like contrast, alignment, repetition and proximity) to de-clutter user interfaces." },
+          { "id": "choose-appropriate-typography", "text": "Choose appropriate typography." },
+          { "id": "devise-grids", "text": "Devise grids." },
+          { "id": "lay-out-pages", "text": "Lay out pages." },
+          { "id": "choose-colour-palettes", "text": "Choose colour palettes." },
+          { "id": "develop-icons", "text": "Develop icons." },
+          { "id": "articulate-importance-brand-style", "text": "Articulate the importance of following a common brand style." }
         ]
       },
       {
         "id": "writing",
-        "label": "Technical Writing",
+        "label": "UX Writing & Content",
         "behaviours": [
-          { "id": "write-clear-microcopy-ui-labels", "text": "Write clear microcopy and UI labels" },
-          { "id": "document-user-requirements-specs", "text": "Document user requirements and specs" },
-          { "id": "create-help-documentation-guides", "text": "Create help documentation and guides" },
-          { "id": "maintain-consistent-tone-voice", "text": "Maintain a consistent tone of voice" }
+          { "id": "write-plain-english", "text": "Write content in plain English." },
+          { "id": "phrase-from-user-perspective", "text": "Phrase content from the user's perspective (rather than the system's perspective)." },
+          { "id": "create-content-for-tasks-transactions", "text": "Create content that helps users complete tasks and transactions." },
+          { "id": "express-complex-ideas-concisely", "text": "Express complex ideas concisely." },
+          { "id": "create-edit-macro-micro-copy", "text": "Create and edit macro- and micro-copy." },
+          { "id": "write-tone-of-voice-brand", "text": "Write content in the tone of voice that matches the organisation's identity or brand." },
+          { "id": "choose-right-help-type", "text": "Choose the right kind of help for the situation: tutorials v manuals v contextual help v micro-copy." }
         ]
       },
       {
-        "id": "strategy",
-        "label": "User Strategy",
+        "id": "ui-prototyping",
+        "label": "UI Prototyping",
         "behaviours": [
-          { "id": "align-ux-goals-business-objectives", "text": "Align UX goals with business objectives" },
-          { "id": "create-customer-journey-maps", "text": "Create customer journey maps" },
-          { "id": "define-value-propositions", "text": "Define value propositions" },
-          { "id": "facilitate-stakeholder-workshops", "text": "Facilitate stakeholder workshops" }
+          { "id": "translate-ideas-prototypes-simulations", "text": "Translate ideas into interactions by developing prototypes and simulations." },
+          { "id": "choose-appropriate-prototype-fidelity", "text": "Choose the appropriate fidelity of prototype for the phase of design." },
+          { "id": "articulate-benefits-fast-iteration", "text": "Articulate the benefits of fast iteration." },
+          { "id": "create-paper-prototypes", "text": "Create paper prototypes." },
+          { "id": "explore-design-space-before-solution", "text": "Properly explore the design space before deciding on a solution." },
+          { "id": "create-interactive-electronic-prototypes", "text": "Create interactive electronic prototypes." }
         ]
       },
       {
-        "id": "management",
-        "label": "UX Management",
+        "id": "ux-leadership",
+        "label": "UX Leadership",
         "behaviours": [
-          { "id": "mentor-junior-designers", "text": "Mentor junior designers" },
-          { "id": "stay-updated-industry-trends", "text": "Stay updated on industry trends" },
-          { "id": "contribute-design-community", "text": "Contribute to the design community" },
-          { "id": "manage-project-timelines-budgets", "text": "Manage project timelines and budgets" }
+          { "id": "plan-schedule-ux-work", "text": "Plan and schedule user experience work." },
+          { "id": "constructively-critique-team-work", "text": "Constructively critique the work of team members." },
+          { "id": "argue-cost-benefit-ux-activities", "text": "Argue the cost-benefit of user experience activities." },
+          { "id": "lead-multidisciplinary-team", "text": "Lead a multidisciplinary team." },
+          { "id": "assemble-team-members", "text": "Assemble team members for a project." },
+          { "id": "promote-team-professional-development", "text": "Promote ongoing professional development of the team." },
+          { "id": "liaise-with-stakeholders", "text": "Liaise with stakeholders." },
+          { "id": "manage-client-expectations", "text": "Manage client expectations." },
+          { "id": "measure-monitor-ux-effect", "text": "Measure and monitor the effect of UX on the company's success." },
+          { "id": "evangelise-ux-throughout-company", "text": "Evangelise UX throughout the company." }
         ]
       }
     ]

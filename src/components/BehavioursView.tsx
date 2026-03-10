@@ -129,7 +129,7 @@ export default function BehavioursView({ item, frameworkId }: Props) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Level summary */}
-      <div className="shrink-0 px-5 pt-3 pb-3 border-b border-[#222]">
+      <div className="shrink-0 pt-3 pb-3 border-b border-[#222]">
         <div className="flex items-center gap-2">
           {item.isDevelopment && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/25">
@@ -143,7 +143,7 @@ export default function BehavioursView({ item, frameworkId }: Props) {
       </div>
 
       {/* Scrollable behaviours list */}
-      <ul className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 max-w-5xl mx-auto">
+      <ul className="flex-1 overflow-y-auto overscroll-contain py-4 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3">
         {item.behaviours.map((b, i) => {
           const behaviourResources = resources.get(b.id) ?? [];
           const hasResources = behaviourResources.length > 0;

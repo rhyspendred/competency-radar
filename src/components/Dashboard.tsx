@@ -377,56 +377,60 @@ export default function Dashboard() {
   return (
     <div
       ref={mainRef}
-      className="h-full bg-black text-white flex flex-col overflow-hidden relative"
+      className={`h-full bg-black text-white flex flex-col overflow-hidden relative w-full ${!detailItem ? "max-w-2xl lg:max-w-3xl mx-auto" : ""}`}
     >
-      {/* App bar */}
-      <header className="shrink-0 h-11 flex items-center justify-between px-4 z-20">
-        {detailItem ? (
-          <motion.button
-            whileTap={{ scale: 0.95, opacity: 0.8 }}
-            transition={SPRING}
-            onClick={() => setDetailId(null)}
-            className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-          >
-            &larr; Back
-          </motion.button>
-        ) : (
-          <div className="w-10" />
-        )}
-        <h1 className="text-sm font-semibold tracking-tight text-white truncate px-2">
-          {detailItem ? detailItem.label : frameworkName}
-        </h1>
-        <div className="w-10 flex justify-end">
-          {!detailItem && (
+      {detailItem ? (
+        /* Behaviours view: header + content share max-w-5xl container for alignment */
+        <div className="flex-1 flex flex-col min-h-0 max-w-5xl mx-auto w-full px-4">
+          <header className="shrink-0 h-11 flex items-center justify-between z-20">
             <motion.button
               whileTap={{ scale: 0.95, opacity: 0.8 }}
               transition={SPRING}
-              onClick={() => setMenuOpen(true)}
-              className="text-gray-400 hover:text-white transition-colors cursor-pointer p-1 -mr-1"
+              onClick={() => setDetailId(null)}
+              className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              >
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="4" y1="12" x2="20" y2="12" />
-                <line x1="4" y1="18" x2="20" y2="18" />
-              </svg>
+              &larr; Back
             </motion.button>
-          )}
+            <h1 className="text-xl font-bold text-white truncate px-2">
+              {detailItem.label}
+            </h1>
+            <div className="w-10" />
+          </header>
+          <BehavioursView item={detailItem} frameworkId={frameworkId} />
+        </div>
+      ) : (
+        <>
+      {/* App bar */}
+      <header className="shrink-0 h-11 flex items-center justify-between px-4 z-20">
+        <div className="w-10" />
+        <h1 className="text-sm font-semibold tracking-tight text-white truncate px-2">
+          {frameworkName}
+        </h1>
+        <div className="w-10 flex justify-end">
+          <motion.button
+            whileTap={{ scale: 0.95, opacity: 0.8 }}
+            transition={SPRING}
+            onClick={() => setMenuOpen(true)}
+            className="text-gray-400 hover:text-white transition-colors cursor-pointer p-1 -mr-1"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            >
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="18" x2="20" y2="18" />
+            </svg>
+          </motion.button>
         </div>
       </header>
 
       {/* Content area */}
-      {detailItem ? (
-        <BehavioursView item={detailItem} frameworkId={frameworkId} />
-      ) : (
-        <>
           {/* Wrapping card carousel */}
           <div className="shrink-0 overflow-hidden py-2 relative">
             <div
