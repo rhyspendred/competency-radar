@@ -223,7 +223,7 @@ export default function CompetencyRadar({
                             key={item.id}
                             fill={
                               filled
-                                ? item.isTarget
+                                ? item.isDevelopment
                                   ? ORANGE_SHADES[li]
                                   : BLUE_SHADES[li]
                                 : "rgba(255,255,255,0.03)"
@@ -240,6 +240,58 @@ export default function CompetencyRadar({
                 })}
               </PieChart>
             </div>
+
+            {/* Development arrows */}
+            <svg
+              width={size}
+              height={size}
+              className="absolute inset-0 pointer-events-none"
+            >
+              {data.map((item, idx) => {
+                if (!item.isDevelopment) return null;
+
+                const midAngle = 90 - (idx + 0.5) * segAngle;
+                const midRad = toRad(midAngle);
+                const ux = Math.cos(midRad);
+                const uy = -Math.sin(midRad);
+                const tx = -uy;
+                const ty = ux;
+
+                const startR = (inner + (item.score - 0.2) * band) * anim;
+                const endR = (inner + (item.score + 0.55) * band) * anim;
+                const headLen = band * anim * 0.3;
+                const headW = band * anim * 0.15;
+                const sw = Math.max(1.5, band * anim * 0.07);
+
+                const sx = cx + startR * ux;
+                const sy = cy + startR * uy;
+                const ex = cx + endR * ux;
+                const ey = cy + endR * uy;
+
+                const t1x = ex - headLen * ux + headW * tx;
+                const t1y = ey - headLen * uy + headW * ty;
+                const t2x = ex - headLen * ux - headW * tx;
+                const t2y = ey - headLen * uy - headW * ty;
+
+                return (
+                  <g key={item.id} opacity={0.85}>
+                    <line
+                      x1={sx}
+                      y1={sy}
+                      x2={ex - headLen * 0.3 * ux}
+                      y2={ey - headLen * 0.3 * uy}
+                      stroke="white"
+                      strokeWidth={sw}
+                      strokeLinecap="round"
+                    />
+                    <polygon
+                      points={`${ex},${ey} ${t1x},${t1y} ${t2x},${t2y}`}
+                      fill="white"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
 
             {/* Perimeter labels (disabled for now) */}
             {false && <svg

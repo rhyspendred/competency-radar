@@ -8,7 +8,7 @@ export interface CompetencyItem {
   score: number;
   maxScore: number;
   scaleName: string;
-  isTarget: boolean;
+  isDevelopment: boolean;
   behaviours: string[];
 }
 
@@ -20,7 +20,9 @@ export function useCompetencyData() {
     () => ({ ...(userData.scores as Record<string, number>) }),
   );
 
-  const targets = useMemo(() => new Set<string>(userData.targets), []);
+  const [developmentAreas, setDevelopmentAreas] = useState<Set<string>>(
+    () => new Set<string>(userData["areas-of-development"]),
+  );
 
   const data: CompetencyItem[] = useMemo(
     () =>
@@ -32,11 +34,11 @@ export function useCompetencyData() {
           score,
           maxScore,
           scaleName: scale[String(score)] ?? "Unrated",
-          isTarget: targets.has(cat.id),
+          isDevelopment: developmentAreas.has(cat.id) && score >= 1 && score < maxScore,
           behaviours: cat.behaviours,
         };
       }),
-    [scores, targets],
+    [scores, developmentAreas],
   );
 
   const setScore = (id: string, value: number) => {
@@ -46,5 +48,14 @@ export function useCompetencyData() {
     }));
   };
 
-  return { frameworkName: framework.name, data, setScore };
+  const toggleDevelopment = (id: string) => {
+    setDevelopmentAreas((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  return { frameworkName: framework.name, data, setScore, toggleDevelopment };
 }

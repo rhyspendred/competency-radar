@@ -257,7 +257,7 @@ function AboutDrawer({ onClose }: { onClose: () => void }) {
 /* ── Dashboard ────────────────────────────────────────────── */
 
 export default function Dashboard() {
-  const { frameworkName, data, setScore } = useCompetencyData();
+  const { frameworkName, data, setScore, toggleDevelopment } = useCompetencyData();
   const n = data.length;
   const midStart = Math.floor(COPIES / 2) * n;
 
@@ -448,34 +448,50 @@ export default function Dashboard() {
                   >
                     <div
                       className={`px-4 py-2.5 flex items-center justify-between gap-3 ${
-                        item.isTarget ? "bg-orange-500" : "bg-blue-600"
+                        item.isDevelopment ? "bg-orange-500" : "bg-blue-600"
                       }`}
                     >
                       <h2 className="text-base font-bold text-white truncate">
                         {item.label}
                       </h2>
-                      {item.isTarget && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/20 text-white shrink-0">
-                          Target
-                        </span>
-                      )}
                     </div>
 
                     <div className="px-4 pt-3 pb-4 space-y-3">
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-[10px] font-bold uppercase tracking-widest shrink-0 ${
-                            item.isTarget ? "text-orange-400" : "text-blue-400"
+                            item.isDevelopment ? "text-orange-400" : "text-blue-400"
                           }`}
                         >
                           Level
                         </span>
-                        <span className="text-2xl font-bold text-white">
+                        <span className="text-2xl font-bold text-white flex-1">
                           <AnimatedLevel
                             score={item.score}
                             label={item.scaleName}
                           />
                         </span>
+                        {isActive && (
+                          <motion.button
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDevelopment(item.id);
+                            }}
+                            disabled={item.score < 1 || item.score >= item.maxScore}
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                              item.isDevelopment
+                                ? "bg-orange-500/20 border-orange-500/40 text-orange-400"
+                                : "bg-[#1a1a1a] border-[#333] text-gray-600"
+                            }`}
+                            title={item.isDevelopment ? "Remove development goal" : "Mark as development goal"}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 19V5" />
+                              <path d="M5 12l7-7 7 7" />
+                            </svg>
+                          </motion.button>
+                        )}
                       </div>
 
                       <div className="flex gap-1.5">
@@ -486,7 +502,7 @@ export default function Dashboard() {
                             style={{
                               backgroundColor:
                                 j < item.score
-                                  ? item.isTarget
+                                  ? item.isDevelopment
                                     ? ORANGE_SHADES[j]
                                     : BLUE_SHADES[j]
                                   : "#222",

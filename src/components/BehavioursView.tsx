@@ -10,9 +10,9 @@ export default function BehavioursView({ item }: Props) {
       {/* Level summary */}
       <div className="shrink-0 px-5 pt-3 pb-3 border-b border-[#222]">
         <div className="flex items-center gap-2">
-          {item.isTarget && (
+          {item.isDevelopment && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/25">
-              Target
+              AoD
             </span>
           )}
           <p className="text-sm text-gray-500">
