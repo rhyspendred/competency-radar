@@ -241,8 +241,8 @@ export default function CompetencyRadar({
               </PieChart>
             </div>
 
-            {/* Perimeter labels */}
-            <svg
+            {/* Perimeter labels (disabled for now) */}
+            {false && <svg
               width={size}
               height={size}
               className="absolute inset-0 pointer-events-none"
@@ -291,7 +291,7 @@ export default function CompetencyRadar({
                   </text>
                 );
               })}
-            </svg>
+            </svg>}
           </div>
         </div>
       )}
