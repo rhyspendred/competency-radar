@@ -140,8 +140,9 @@ export default function CompetencyRadar({
     const drag = dragRef.current;
     if (drag && !drag.dragging) {
       const id = data[drag.segIndex].id;
-      onSelect(id);
-      if (drag.startDist >= inner * 0.5) {
+      if (id !== selectedId) {
+        onSelect(id);
+      } else if (drag.startDist >= inner * 0.5) {
         const zone = (outer - inner) / LEVELS;
         const level = Math.max(0, Math.min(LEVELS, Math.round((drag.startDist - inner) / zone)));
         onScoreChange(id, level);
