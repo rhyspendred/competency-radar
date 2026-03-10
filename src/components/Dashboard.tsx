@@ -73,14 +73,20 @@ function AnimatedLabel({ text, value }: { text: string; value: number }) {
   const dir = dirRef.current;
 
   return (
-    <span className="inline-flex overflow-hidden" style={{ height: "1.3em" }}>
-      <AnimatePresence initial={false} mode="popLayout">
+    <span
+      className="relative inline-block overflow-hidden text-right"
+      style={{ height: "1.3em" }}
+    >
+      {/* Invisible sizer keeps width stable */}
+      <span className="invisible whitespace-nowrap">{text}</span>
+      <AnimatePresence initial={false}>
         <motion.span
           key={text}
-          initial={{ x: dir * 60, opacity: 0, filter: "blur(8px)" }}
-          animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
-          exit={{ x: -dir * 60, opacity: 0, filter: "blur(8px)" }}
-          transition={{ type: "spring", stiffness: 120, damping: 18 }}
+          initial={{ y: dir > 0 ? "100%" : "-100%" }}
+          animate={{ y: "0%" }}
+          exit={{ y: dir > 0 ? "-100%" : "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          className="absolute inset-x-0 whitespace-nowrap text-right"
         >
           {text}
         </motion.span>
@@ -247,7 +253,22 @@ export default function Dashboard() {
       ) : (
         <>
           {/* Wrapping card carousel */}
-          <div className="shrink-0 overflow-hidden py-2">
+          <div className="shrink-0 overflow-hidden py-2 relative">
+            {/* Edge masks — cover everything outside the active card */}
+            <div
+              className="absolute inset-y-0 left-0 z-10 pointer-events-none"
+              style={{
+                width: `calc(50% - ${cardW / 2 + 8}px)`,
+                background: "linear-gradient(to right, black 80%, transparent)",
+              }}
+            />
+            <div
+              className="absolute inset-y-0 right-0 z-10 pointer-events-none"
+              style={{
+                width: `calc(50% - ${cardW / 2 + 8}px)`,
+                background: "linear-gradient(to left, black 80%, transparent)",
+              }}
+            />
             <motion.div
               ref={carouselRef}
               className="flex"
@@ -364,8 +385,8 @@ export default function Dashboard() {
             </motion.div>
           </div>
 
-          {/* Chart */}
-          <div className="flex-1 min-h-0">
+          {/* Chart — top-aligned, close to cards */}
+          <div className="flex-1 min-h-0 pt-3">
             <CompetencyRadar
               data={data}
               selectedId={selectedId}

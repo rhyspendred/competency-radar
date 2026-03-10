@@ -156,7 +156,7 @@ export default function CompetencyRadar({
   const guideRadii = [1, 2, 3, 4].map((l) => (inner + l * band) * anim);
 
   return (
-    <div ref={wrapperRef} className="w-full h-full flex items-center justify-center">
+    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center">
       {size > 0 && (
         <div
           ref={containerRef}
