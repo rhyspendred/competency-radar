@@ -24,6 +24,10 @@ export function useCompetencyData() {
     () => new Set<string>(userData["areas-of-development"]),
   );
 
+  const [behavioursMet, setBehavioursMet] = useState<Set<string>>(
+    () => new Set<string>(userData["behaviours-met"] ?? []),
+  );
+
   const data: CompetencyItem[] = useMemo(
     () =>
       framework.categories.map((cat) => {
@@ -57,11 +61,22 @@ export function useCompetencyData() {
     });
   };
 
+  const toggleBehaviourMet = (behaviourId: string) => {
+    setBehavioursMet((prev) => {
+      const next = new Set(prev);
+      if (next.has(behaviourId)) next.delete(behaviourId);
+      else next.add(behaviourId);
+      return next;
+    });
+  };
+
   return {
     frameworkId: framework.frameworkId,
     frameworkName: framework.name,
     data,
     setScore,
     toggleDevelopment,
+    behavioursMet,
+    toggleBehaviourMet,
   };
 }

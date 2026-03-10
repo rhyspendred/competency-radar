@@ -7,6 +7,8 @@ import type { Resource, ResourceType } from "../hooks/useResources";
 interface Props {
   item: CompetencyItem;
   frameworkId: string;
+  behavioursMet: Set<string>;
+  onToggleBehaviour: (behaviourId: string) => void;
 }
 
 const RESOURCE_ICONS: Record<ResourceType, React.ReactNode> = {
@@ -215,7 +217,7 @@ function ResourcePills({
   );
 }
 
-export default function BehavioursView({ item, frameworkId }: Props) {
+export default function BehavioursView({ item, frameworkId, behavioursMet, onToggleBehaviour }: Props) {
   const resources = useResources(frameworkId);
   const [drawer, setDrawer] = useState<{
     behaviourText: string;
@@ -254,17 +256,27 @@ export default function BehavioursView({ item, frameworkId }: Props) {
       >
         {item.behaviours.map((b) => {
           const behaviourResources = resources.get(b.id) ?? [];
+          const isMet = behavioursMet.has(b.id);
           return (
             <li key={b.id} className="border-b border-[#222] pb-4 last:border-0 last:pb-0">
               <div className="flex items-start gap-3">
-                <div
-                  className="shrink-0 w-6 h-6 mt-0.5 rounded border-2 border-[#444] bg-[#1a1a1a] flex items-center justify-center cursor-pointer touch-manipulation"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Mark "${b.text.slice(0, 30)}..." as achieved`}
+                <button
+                  type="button"
+                  onClick={() => onToggleBehaviour(b.id)}
+                  className={`shrink-0 w-6 h-6 mt-0.5 rounded border-2 flex items-center justify-center cursor-pointer touch-manipulation transition-colors ${
+                    isMet
+                      ? "border-blue-500 bg-blue-500 text-white"
+                      : "border-[#444] bg-[#1a1a1a] hover:border-[#555]"
+                  }`}
+                  aria-label={isMet ? `Unmark "${b.text.slice(0, 30)}..." as achieved` : `Mark "${b.text.slice(0, 30)}..." as achieved`}
+                  aria-pressed={isMet}
                 >
-                  {/* Checkbox placeholder – functionality to be added */}
-                </div>
+                  {isMet && (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </button>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-300 leading-relaxed">{b.text}</p>
                   <ResourcePills

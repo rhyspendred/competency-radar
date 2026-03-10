@@ -272,7 +272,7 @@ function AboutDrawer({ onClose }: { onClose: () => void }) {
 /* ── Dashboard ────────────────────────────────────────────── */
 
 export default function Dashboard() {
-  const { frameworkId, frameworkName, data, setScore, toggleDevelopment } = useCompetencyData();
+  const { frameworkId, frameworkName, data, setScore, toggleDevelopment, behavioursMet, toggleBehaviourMet } = useCompetencyData();
   const n = data.length;
   const midStart = Math.floor(COPIES / 2) * n;
 
@@ -396,7 +396,12 @@ export default function Dashboard() {
             </h1>
             <div className="w-10" />
           </header>
-          <BehavioursView item={detailItem} frameworkId={frameworkId} />
+          <BehavioursView
+            item={detailItem}
+            frameworkId={frameworkId}
+            behavioursMet={behavioursMet}
+            onToggleBehaviour={toggleBehaviourMet}
+          />
         </div>
       ) : (
         <>
