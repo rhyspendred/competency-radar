@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import { animate as fmAnimate } from "framer-motion";
+import { motion } from "framer-motion";
 import type { CompetencyItem } from "../hooks/useCompetencyData";
 
 const MARGIN = 16;
@@ -35,6 +36,7 @@ export default function CompetencyRadar({
 }: Props) {
   const [anim, setAnim] = useState(0);
   const [size, setSize] = useState(0);
+  const [showLabels, setShowLabels] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -162,9 +164,35 @@ export default function CompetencyRadar({
   const toRad = (d: number) => (d * Math.PI) / 180;
 
   return (
-    <div ref={wrapperRef} className="w-full h-full flex items-start justify-center">
+    <div ref={wrapperRef} className="relative w-full h-full flex items-start justify-center">
       {size > 0 && (
-        <div
+        <>
+          <motion.button
+            type="button"
+            onClick={() => setShowLabels((v) => !v)}
+            whileTap={{ scale: 0.95 }}
+            transition={SPRING}
+            className={`absolute top-0 right-4 z-10 w-9 h-9 rounded-lg border flex items-center justify-center transition-colors cursor-pointer ${
+              showLabels
+                ? "bg-[#333] border-[#444] text-white"
+                : "bg-[#1a1a1a] border-[#333] text-gray-400 hover:text-white hover:border-[#444]"
+            }`}
+            title={showLabels ? "Hide labels" : "Show labels"}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            </svg>
+          </motion.button>
+          <div
           ref={containerRef}
           className="touch-none outline-none select-none [-webkit-tap-highlight-color:transparent]"
           style={{ width: size, height: size }}
@@ -293,8 +321,8 @@ export default function CompetencyRadar({
               })}
             </svg>
 
-            {/* Perimeter labels (disabled for now) */}
-            {false && <svg
+            {/* Perimeter labels */}
+            {showLabels && <svg
               width={size}
               height={size}
               className="absolute inset-0 pointer-events-none"
@@ -346,6 +374,7 @@ export default function CompetencyRadar({
             </svg>}
           </div>
         </div>
+        </>
       )}
     </div>
   );
