@@ -143,7 +143,7 @@ export default function BehavioursView({ item, frameworkId }: Props) {
       </div>
 
       {/* Scrollable behaviours list */}
-      <ul className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-3">
+      <ul className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 max-w-5xl mx-auto">
         {item.behaviours.map((b, i) => {
           const behaviourResources = resources.get(b.id) ?? [];
           const hasResources = behaviourResources.length > 0;

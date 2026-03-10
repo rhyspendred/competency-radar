@@ -338,15 +338,16 @@ export default function CompetencyRadar({
                   const startA = isTop ? a1 : a2;
                   const endA = isTop ? a2 : a1;
                   const sweep = isTop ? 1 : 0;
-                  const sx = cx + labelR * Math.cos(toRad(startA));
-                  const sy = cy - labelR * Math.sin(toRad(startA));
-                  const ex = cx + labelR * Math.cos(toRad(endA));
-                  const ey = cy - labelR * Math.sin(toRad(endA));
+                  const r = isTop ? labelR : labelR + labelFontSize;
+                  const sx = cx + r * Math.cos(toRad(startA));
+                  const sy = cy - r * Math.sin(toRad(startA));
+                  const ex = cx + r * Math.cos(toRad(endA));
+                  const ey = cy - r * Math.sin(toRad(endA));
                   return (
                     <path
                       key={idx}
                       id={`label-arc-${idx}`}
-                      d={`M${sx},${sy} A${labelR},${labelR} 0 0 ${sweep} ${ex},${ey}`}
+                      d={`M${sx},${sy} A${r},${r} 0 0 ${sweep} ${ex},${ey}`}
                       fill="none"
                     />
                   );
