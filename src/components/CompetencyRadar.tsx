@@ -156,6 +156,11 @@ export default function CompetencyRadar({
 
   const guideRadii = [1, 2, 3, 4].map((l) => (inner + l * band) * anim);
 
+  const segAngle = 360 / data.length;
+  const labelR = outer + 10;
+  const labelFontSize = Math.max(9, Math.min(12, Math.round(size / 30)));
+  const toRad = (d: number) => (d * Math.PI) / 180;
+
   return (
     <div ref={wrapperRef} className="w-full h-full flex items-start justify-center">
       {size > 0 && (
@@ -190,7 +195,7 @@ export default function CompetencyRadar({
 
             {/* Data rings */}
             <div className="absolute inset-0">
-              <PieChart width={size} height={size}>
+              <PieChart width={size} height={size} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                 {Array.from({ length: LEVELS }, (_, li) => {
                   const level = li + 1;
                   const ir = (inner + li * band) * anim;
@@ -235,6 +240,58 @@ export default function CompetencyRadar({
                 })}
               </PieChart>
             </div>
+
+            {/* Perimeter labels */}
+            <svg
+              width={size}
+              height={size}
+              className="absolute inset-0 pointer-events-none"
+              style={{ overflow: "visible" }}
+            >
+              <defs>
+                {data.map((_, idx) => {
+                  const midAngle = 90 - (idx + 0.5) * segAngle;
+                  const isTop = Math.sin(toRad(midAngle)) >= 0;
+                  const halfSpan = 50;
+                  const a1 = midAngle + halfSpan;
+                  const a2 = midAngle - halfSpan;
+                  const startA = isTop ? a1 : a2;
+                  const endA = isTop ? a2 : a1;
+                  const sweep = isTop ? 1 : 0;
+                  const sx = cx + labelR * Math.cos(toRad(startA));
+                  const sy = cy - labelR * Math.sin(toRad(startA));
+                  const ex = cx + labelR * Math.cos(toRad(endA));
+                  const ey = cy - labelR * Math.sin(toRad(endA));
+                  return (
+                    <path
+                      key={idx}
+                      id={`label-arc-${idx}`}
+                      d={`M${sx},${sy} A${labelR},${labelR} 0 0 ${sweep} ${ex},${ey}`}
+                      fill="none"
+                    />
+                  );
+                })}
+              </defs>
+              {data.map((item, idx) => {
+                const sel = item.id === selectedId;
+                return (
+                  <text
+                    key={item.id}
+                    fill="white"
+                    fontSize={sel ? labelFontSize + 1 : labelFontSize}
+                    fontWeight={sel ? 600 : 400}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    opacity={anim * (sel ? 1 : 0.3)}
+                    style={{ transition: "opacity 0.2s ease" }}
+                  >
+                    <textPath href={`#label-arc-${idx}`} startOffset="50%">
+                      {item.label}
+                    </textPath>
+                  </text>
+                );
+              })}
+            </svg>
           </div>
         </div>
       )}
